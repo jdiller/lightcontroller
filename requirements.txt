@@ -1,0 +1,4 @@
+sseclient
+gevent
+#RPi.GPIO
+requests
