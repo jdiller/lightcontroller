@@ -141,10 +141,20 @@ def set_lights_with_weather_data(weather_data):
         temperature_color = get_color_for_temperature(temperature)
         settings = LightSettings(color=temperature_color)
 
-        #cut intensity by half so things aren't so bright
-        settings.red /= 2
-        settings.blue /= 2
-        settings.green /= 2
+        if precip_intensity > 0:
+            settings.flashing = True
+            settings.on_duration = 1
+            settings.off_duration = 1
+
+        if precip_probability > 30:
+            settings.flashing = True
+            settings.on_duration = 4
+            settins.off_duration = 0.5
+
+        #cut intensity so things aren't so bright
+        settings.red /= 2.5
+        settings.blue /= 2.5
+        settings.green /= 2.5
         set_lights_with_worker(settings)
 
 # try to recover desired state from persisted message
