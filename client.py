@@ -73,7 +73,7 @@ def set_leds(settings):
                     led.ChangeDutyCycle(0)
                 gevent.sleep(settings.offduration)
         else:
-            for led, intensity in leds:
+            for led, intensity in settings.leds:
                 led.ChangeDutyCycle(intensity)
     except gevent.GreenletExit:
         logging.debug('LED Flash Greenlet Terminated')
