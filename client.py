@@ -8,12 +8,13 @@ import sys
 import time
 import requests
 from gevent import monkey, Greenlet
+from lightsettings import LightSettings
 
 #FORECAST_API_KEY = os.environ.get('FORECAST_API_KEY')
-FORECAST_API_KEY='FORECAST_KEY'
+FORECAST_API_KEY = 'FORECAST_KEY'
 LAT = 43.6462468
 LONG = -79.3967172
-BASE_URL='https://api.forecast.io/forecast/{}/{},{}?units=si'
+BASE_URL = 'https://api.forecast.io/forecast/{}/{},{}?units=si'
 
 if not FORECAST_API_KEY:
     print "Forecast API key needed."
@@ -52,22 +53,25 @@ red_led.start(0)
 blue_led.start(0)
 green_led.start(0)
 
+LightSettings.red_led = red_led
+LightSettings.blue_led = blue_led
+LightSettings.green_led = green_led
 
 
-def set_leds(leds, flash=False, onduration=1, offduration=1):
+def set_leds(settings):
     """
     Method to turn the lights on and off. Runs in a greenlet to enable
     flashing the leds while still waiting for new messages
     """
     try:
-        if flash:
+        if settings.flash:
             while True:
-                for led, intensity in leds:
+                for led, intensity in settings.leds:
                     led.ChangeDutyCycle(intensity)
-                gevent.sleep(onduration)
+                gevent.sleep(settings.onduration)
                 for led, intensity in leds:
                     led.ChangeDutyCycle(0)
-                gevent.sleep(offduration)
+                gevent.sleep(settings.offduration)
         else:
             for led, intensity in leds:
                 led.ChangeDutyCycle(intensity)
@@ -75,30 +79,12 @@ def set_leds(leds, flash=False, onduration=1, offduration=1):
         logging.debug('LED Flash Greenlet Terminated')
 
 
-def get_instructions_from_message(settings):
-    leds = []
-    flash = settings.get('flash', False)
-    onduration = settings.get('onduration', 1)
-    offduration = settings.get('offduration', 1)
-    if 'red' in settings:
-        leds.append((red_led, float(settings['red'])))
-    if 'blue' in settings:
-        leds.append((blue_led, float(settings['blue'])))
-    if 'green' in settings:
-        leds.append((green_led, float(settings['green'])))
-    return (leds, onduration, offduration, flash)
-
-
-def set_lights_with_worker(leds, onduration, offduration, flash):
+def set_lights_with_worker(lightsettings):
     global worker
     if worker and not worker.dead:
         worker.kill()
     worker = Greenlet(
-        set_leds, leds,
-        flash=flash,
-        onduration=onduration,
-        offduration=offduration
-    )
+        set_leds, lightsettings)
     worker.start()
     gevent.sleep(0)
 
@@ -106,51 +92,45 @@ def set_lights_with_worker(leds, onduration, offduration, flash):
 def recover_last_state():
     try:
         f = open('last_state.json')
-        message = json.loads(f.read())
+        settings = LightSettings.from_json(f.read())
         f.close()
     except IOError as x:
         logging.error(x)
-        message = None
-    return message
+        settings = None
+    return settings
 
 
-def persist_last_state(message):
+def persist_last_state(settings):
     try:
         f = open('last_state.json', 'w')
-        f.write(json.dumps(message))
+        f.write(settings.to_json())
         f.close()
     except IOError as x:
         logging.error(x)
 
 
 def get_color_for_temperature(temperature):
-    #temperature colour range:
-    #below -15 -> turquoise (A448FF)
+    # temperature colour range:
+    # below -15 -> turquoise (A448FF)
     #-14 to 0 -> blue (4368E9)
-    #0 to 10 -> green (4EDEA8)
-    #10 to 20 -> yellow (F2FD2F)
-    #20 to 30 -> orange (F8C11D)
-    #over 30 -> red (FC4423)
+    # 0 to 10 -> green (4EDEA8)
+    # 10 to 20 -> yellow (F2FD2F)
+    # 20 to 30 -> orange (F8C11D)
+    # over 30 -> red (FC4423)
 
-    #map it
+    # map it
     temps = {
-        (float("-inf"), -15) : (0xA4, 0x48, 0xFF),
-        (-14.99, 0) : (0x43, 0x68, 0xE9),
-        (0.01, 10)  : (0x4E, 0xDE, 0xA8),
-        (10.01,20)  : (0xF2, 0xFD, 0x2F),
-        (20.01,30)  : (0xF8, 0xC1, 0x1D),
-        (30.01, float("inf")) : (0xFC, 0x44, 0x23)
+        (float("-inf"), -15): (0xA4, 0x48, 0xFF),
+        (-14.99, 0): (0x43, 0x68, 0xE9),
+        (0.01, 10): (0x4E, 0xDE, 0xA8),
+        (10.01, 20): (0xF2, 0xFD, 0x2F),
+        (20.01, 30): (0xF8, 0xC1, 0x1D),
+        (30.01, float("inf")): (0xFC, 0x44, 0x23)
     }
     for key, value in temps.iteritems():
         if temperature >= key[0] and temperature <= key[1]:
-            return translate_color_to_message(value)
+            return value
 
-def translate_color_to_message(color):
-    out = {'red'   : color[0] / 255.0 * 100,
-           'green' : color[1] / 255.0 * 100,
-           'blue'  : color[2] / 255.8 * 100}
-
-    return out
 
 def set_lights_with_weather_data(weather_data):
     current_weather = weather_data.get('currently')
@@ -159,14 +139,13 @@ def set_lights_with_weather_data(weather_data):
         precip_intensity = current_weather['precipIntensity']
         temperature = current_weather['temperature']
         temperature_color = get_color_for_temperature(temperature)
-        instructions = get_instructions_from_message(temperature_color)
-        set_lights_with_worker(*instructions)
+        settings = LightSettings(color=temperature_color)
+        set_lights_with_worker(settings)
 
 # try to recover desired state from persisted message
-message = recover_last_state()
-if message:
-    instructions = get_instructions_from_message(message)
-    set_lights_with_worker(*instructions)
+last_state = recover_last_state()
+if last_state:
+    set_lights_with_worker(last_state)
 
 try:
     while True:

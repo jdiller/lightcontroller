@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 
+
 class LightSettingsEncoder(json.JSONEncoder):
+
     def default(self, s):
         if isinstance(s, LightSettings):
             ret = {}
-            props = ['red', 'green', 'blue', 'on_duration', 'off_duration', 'flashing']
+            props = ['red', 'green', 'blue',
+                     'on_duration', 'off_duration', 'flashing']
             for p in props:
                 if (getattr(s, p) is not None):
                     ret[p] = getattr(s, p)
@@ -16,13 +19,22 @@ class LightSettingsEncoder(json.JSONEncoder):
 
 class LightSettings(object):
 
-    def __init__(self, red=None, blue=None, green=None, flashing=None, on_duration=None, off_duration=None):
+    red_led = None
+    blue_led = None
+    green_led = None
+
+    def __init__(self, red=None, blue=None, green=None, flashing=None, on_duration=None, off_duration=None, color=None):
+        if color and (red or blue or green):
+            raise ValueError(
+                'Set individual colors or give a color tuple, not both')
         self._red = red
         self._blue = blue
         self._green = green
         self._flashing = flashing
         self._on_duration = on_duration
         self._off_duration = off_duration
+        if color:
+            self.set_color(color)
 
     @property
     def red(self):
@@ -66,6 +78,11 @@ class LightSettings(object):
             self._flashing = value.lower() in (u'yes', u'true', u't', u'1')
         else:
             self._flashing = (value == True)
+        if self._flashing:
+            if self.on_duration is None:
+                self.on_duration = 1
+            if self.off_duration is None:
+                self.off_duration = 1
 
     @property
     def on_duration(self):
@@ -90,7 +107,12 @@ class LightSettings(object):
     def to_json(self):
         return json.dumps(self, cls=LightSettingsEncoder)
 
-    @classmethod 
+    @property
+    def leds(self):
+        for led in ['red', 'green', 'blue']:
+            yield (getattr(self.__class__, '{}_led'.format(led)), getattr(self, led))
+
+    @classmethod
     def from_json(cls, jsonstr):
         d = json.loads(jsonstr)
         return cls.from_dict(d)
@@ -107,3 +129,7 @@ class LightSettings(object):
         ret.off_duration = d.get('off_duration')
         return ret
 
+    def set_color(self, color):
+        self.red = color[0] / 255.0 * 100
+        self.green = color[1] / 255.0 * 100
+        self.blue = color[2] / 255.0 * 100
