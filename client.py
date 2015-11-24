@@ -64,7 +64,7 @@ def set_leds(settings):
     flashing the leds while still waiting for new messages
     """
     try:
-        if settings.flash:
+        if settings.flashing:
             while True:
                 for led, intensity in settings.leds:
                     led.ChangeDutyCycle(intensity)
