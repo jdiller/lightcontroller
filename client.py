@@ -140,6 +140,11 @@ def set_lights_with_weather_data(weather_data):
         temperature = current_weather['temperature']
         temperature_color = get_color_for_temperature(temperature)
         settings = LightSettings(color=temperature_color)
+
+        #cut intensity by half so things aren't so bright
+        settings.red /= 2
+        settings.blue /= 2
+        settings.green /= 2
         set_lights_with_worker(settings)
 
 # try to recover desired state from persisted message
