@@ -22,7 +22,7 @@ if not FORECAST_API_KEY:
 
 # dirty hack to determine if we're actually running on the rpi
 if platform.machine().startswith("arm"):
-    import RPi.GPIO as g
+    import pigpio
 else:
     # dev/test mode
     import MockRPi.GPIO as g
@@ -31,31 +31,26 @@ logging.basicConfig(level=logging.DEBUG)
 monkey.patch_all()
 
 # These are the GPIO pins that control each color
-RED = 17
-GREEN = 24
-BLUE = 23
+GREEN = 17
+RED = 27
+BLUE = 22
 
 worker = None
+pi = pigpio.pi()
 
 # Init the GPIO, enable pulse-width modulation for brightness
-g.setmode(g.BCM)
-g.setup(RED, g.OUT)
-g.setup(BLUE, g.OUT)
-g.setup(GREEN, g.OUT)
-
-PWM_FREQ = 200
-red_led = g.PWM(RED, PWM_FREQ)
-blue_led = g.PWM(BLUE, PWM_FREQ)
-green_led = g.PWM(GREEN, PWM_FREQ)
+pi.set_mode(GREEN, pigpio.OUTPUT)
+pi.set_mode(RED, pigpio.OUTPUT)
+pi.set_mode(BLUE, pigpio.OUTPUT)
 
 # Turn all the lights off to start
-red_led.start(0)
-blue_led.start(0)
-green_led.start(0)
+pi.set_PWM_dutycycle(RED, 0)
+pi.set_PWM_dutycycle(GREEN, 0)
+pi.set_PWM_dutycycle(BLUE, 0)
 
-LightSettings.red_led = red_led
-LightSettings.blue_led = blue_led
-LightSettings.green_led = green_led
+LightSettings.red_led = RED
+LightSettings.blue_led = BLUE
+LightSettings.green_led = GREEN
 
 
 def set_leds(settings):
@@ -67,14 +62,14 @@ def set_leds(settings):
         if settings.flashing:
             while True:
                 for led, intensity in settings.leds:
-                    led.ChangeDutyCycle(intensity)
+                    pi.set_PWM_dutycycle(led, intensity)
                 gevent.sleep(settings.onduration)
                 for led, intensity in leds:
-                    led.ChangeDutyCycle(0)
+                    pi.set_PWM_dutyCyle(led, 0)
                 gevent.sleep(settings.offduration)
         else:
             for led, intensity in settings.leds:
-                led.ChangeDutyCycle(intensity)
+                pi.set_PWM_dutycycle(led, intensity)
     except gevent.GreenletExit:
         logging.debug('LED Flash Greenlet Terminated')
 
