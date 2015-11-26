@@ -28,7 +28,7 @@ else:
     import MockRPi.GPIO as g
 
 logging.basicConfig(level=logging.DEBUG)
-monkey.patch_all()
+#monkey.patch_all()
 
 # These are the GPIO pins that control each color
 GREEN = 17
