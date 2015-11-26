@@ -39,9 +39,9 @@ worker = None
 pi = pigpio.pi()
 
 # Init the GPIO, enable pulse-width modulation for brightness
-pi.set_mode(GREEN, pigpio.OUTPUT)
-pi.set_mode(RED, pigpio.OUTPUT)
-pi.set_mode(BLUE, pigpio.OUTPUT)
+#pi.set_mode(GREEN, pigpio.OUTPUT)
+#pi.set_mode(RED, pigpio.OUTPUT)
+#pi.set_mode(BLUE, pigpio.OUTPUT)
 
 # Turn all the lights off to start
 pi.set_PWM_dutycycle(RED, 0)

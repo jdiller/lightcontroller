@@ -56,7 +56,7 @@ class TestLightSettings(unittest.TestCase):
         with self.assertRaises(ValueError):
             s.red = -10
         with self.assertRaises(ValueError):
-            s.red = 110
+            s.red = 300
 
     def test_invalid_green_value_throws(self):
         s = LightSettings()
@@ -70,7 +70,7 @@ class TestLightSettings(unittest.TestCase):
         with self.assertRaises(ValueError):
             s.blue = -1
         with self.assertRaises(ValueError):
-            s.blue = 101
+            s.blue = 256
 
     def test_can_set_on_duration(self):
         s = LightSettings()
@@ -132,17 +132,17 @@ class TestLightSettings(unittest.TestCase):
     def test_can_create_from_color_tuple(self):
         color = (255, 255, 255)
         s = LightSettings(color=color)
-        self.assertEquals(s.red, 100)
-        self.assertEquals(s.blue, 100)
-        self.assertEquals(s.green, 100)
+        self.assertEquals(s.red, 255)
+        self.assertEquals(s.blue, 255)
+        self.assertEquals(s.green, 255)
 
     def can_set_via_color_tuple(self):
         color = (128, 128, 128)
         s = LightSettings()
         s.set_color(color)
-        self.assertEquals(s.red, 50)
-        self.assertEquals(s.blue, 50)
-        self.assertEquals(s.green, 50)
+        self.assertEquals(s.red, 128)
+        self.assertEquals(s.blue, 128)
+        self.assertEquals(s.green, 128)
 
     def test_raises_if_ambiguous_color_data_supplied(self):
         with self.assertRaises(ValueError):

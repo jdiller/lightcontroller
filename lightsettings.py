@@ -42,8 +42,8 @@ class LightSettings(object):
 
     @red.setter
     def red(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise ValueError('Intensity must be between 0 and 100')
+        if value is not None and (value < 0 or value > 255):
+            raise ValueError('Intensity must be between 0 and 255')
         self._red = float(value)
 
     @property
@@ -52,8 +52,8 @@ class LightSettings(object):
 
     @green.setter
     def green(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise ValueError('Intensity must be between 0 and 100')
+        if value is not None and (value < 0 or value > 255):
+            raise ValueError('Intensity must be between 0 and 255')
         self._green = value
 
     @property
@@ -62,8 +62,8 @@ class LightSettings(object):
 
     @blue.setter
     def blue(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise ValueError('Intensity must be between 0 and 100')
+        if value is not None and (value < 0 or value > 255):
+            raise ValueError('Intensity must be between 0 and 255')
         self._blue = value
 
     @property
@@ -119,7 +119,6 @@ class LightSettings(object):
 
     @classmethod
     def from_dict(cls, d):
-        print d
         ret = LightSettings()
         ret.blue = d.get('blue')
         ret.red = d.get('red')
@@ -130,6 +129,6 @@ class LightSettings(object):
         return ret
 
     def set_color(self, color):
-        self.red = color[0] / 255.0 * 100
-        self.green = color[1] / 255.0 * 100
-        self.blue = color[2] / 255.0 * 100
+        self.red = color[0]
+        self.green = color[1]
+        self.blue = color[2]
