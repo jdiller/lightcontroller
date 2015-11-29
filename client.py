@@ -116,8 +116,8 @@ def get_color_for_temperature(temperature):
     # map it
     temps = {
         (float("-inf"), -15): (0xA4, 0x48, 0xFF),
-        (-14.99, 0): (0x43, 0x68, 0xE9),
-        (0.01, 10): (0x4E, 0xDE, 0xA8),
+        (-14.99, 0): (0x00, 0x00, 0x80),
+        (0.01, 10): (0x00, 0x80, 0x00),
         (10.01, 20): (0xF2, 0xFD, 0x2F),
         (20.01, 30): (0xF8, 0xC1, 0x1D),
         (30.01, float("inf")): (0xFC, 0x44, 0x23)
@@ -174,7 +174,7 @@ try:
 finally:
     # try to clean everything up before exiting.
     # turn the lights off and relinquish control of the GPIO pins
-    red_led.stop()
-    green_led.stop()
-    blue_led.stop()
-    g.cleanup()
+    pi.set_PWM_dutycycle(RED, 0)
+    pi.set_PWM_dutycycle(BLUE, 0)
+    pi.set_PWM_dutycycle(GREEN, 0)
+
