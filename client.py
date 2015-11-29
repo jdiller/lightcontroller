@@ -106,12 +106,12 @@ def persist_last_state(settings):
 
 def get_color_for_temperature(temperature):
     # temperature colour range:
-    # below -15 -> turquoise (A448FF)
-    #-14 to 0 -> blue (4368E9)
-    # 0 to 10 -> green (4EDEA8)
-    # 10 to 20 -> yellow (F2FD2F)
-    # 20 to 30 -> orange (F8C11D)
-    # over 30 -> red (FC4423)
+    # below -15 -> turquoise
+    #-14 to 0 -> blue
+    # 0 to 10 -> green
+    # 10 to 20 -> yellow
+    # 20 to 30 -> orange
+    # over 30 -> red
 
     # map it
     temps = {
