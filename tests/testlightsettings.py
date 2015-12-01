@@ -1,7 +1,6 @@
 import unittest
 import json
 from alights.lightsettings import LightSettings
-import alights.MockRPi.GPIO as g
 
 
 class TestLightSettings(unittest.TestCase):
@@ -113,14 +112,11 @@ class TestLightSettings(unittest.TestCase):
 
     def test_can_iterate_led_settings(self):
         s = LightSettings(red=20, blue=20, green=20)
-        mock_leds = [g.PWM(1, 200),
-                     g.PWM(2, 200),
-                     g.PWM(3, 200)]
-        LightSettings.red_led = mock_leds[0]
-        LightSettings.green_led = mock_leds[1]
-        LightSettings.blue_led = mock_leds[2]
+        LightSettings.red_led = 17
+        LightSettings.green_led = 18
+        LightSettings.blue_led = 19
         for led, val in s.leds:
-            self.assertTrue(led in mock_leds)
+            self.assertTrue(led in [17, 18, 19])
             self.assertEqual(val, 20)
 
     def test_durations_not_none_when_flash_is_on(self):

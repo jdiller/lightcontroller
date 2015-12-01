@@ -1,4 +1,3 @@
-sseclient
-gevent
-#RPi.GPIO
 requests
+flask
+gevent
