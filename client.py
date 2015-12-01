@@ -61,7 +61,7 @@ try:
             settings = LightSettings()
             weather.apply_to_settings(settings)
             pi.apply_settings(settings)
-            gevent.sleep(5)
+            gevent.sleep(90)
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)
