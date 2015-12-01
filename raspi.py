@@ -15,9 +15,17 @@ class RasPi(object):
     def __init__(self):
         self.pi = pigpio.pi()
         self.worker = None
+        self.gentle_transitions = True
 
-    def set_PWM_dutycycle(self, pin, dutycycle, transition_time=0):
-        self.pi.set_PWM_dutycycle(pin, dutycycle)
+    def set_PWM_dutycycle(self, pin, dutycycle):
+        if not self.gentle_transitions:
+            self.pi.set_PWM_dutycycle(pin, dutycycle)
+        else:
+            current_cycle = self.pi.get_PWM_dutycycle(pin)
+            direction = 1 if dutycycle > current_cycle else -1
+            for x in range(int(current_cycle), int(dutycycle) + direction, direction):
+                self.pi.set_PWM_dutycycle(pin, x)
+                gevent.sleep(0.01)
 
     def _set_leds(self, settings):
         try:
