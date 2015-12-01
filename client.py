@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import platform
 import logging
 import gevent
 import sys
+import raspi
 from weather import Weather
 from gevent import Greenlet
 from lightsettings import LightSettings
 
-
-# dirty hack to determine if we're actually running on the rpi
-if platform.machine().startswith("arm"):
-    import pigpio
-else:
-    # dev/test mode
-    import mockpigpio as pigpio
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -24,7 +17,7 @@ RED = 27
 BLUE = 22
 
 worker = None
-pi = pigpio.pi()
+pi = raspi.RasPi()
 
 # Init the GPIO, enable pulse-width modulation for brightness
 # Turn all the lights off to start
@@ -35,37 +28,6 @@ pi.set_PWM_dutycycle(BLUE, 0)
 LightSettings.red_led = RED
 LightSettings.blue_led = BLUE
 LightSettings.green_led = GREEN
-
-
-def set_leds(settings):
-    """
-    Method to turn the lights on and off. Runs in a greenlet to enable
-    flashing the leds while still waiting for new messages
-    """
-    try:
-        if settings.flashing:
-            while True:
-                for led, intensity in settings.leds:
-                    pi.set_PWM_dutycycle(led, intensity)
-                gevent.sleep(settings.onduration)
-                for led, intensity in settings.leds:
-                    pi.set_PWM_dutyCyle(led, 0)
-                gevent.sleep(settings.offduration)
-        else:
-            for led, intensity in settings.leds:
-                pi.set_PWM_dutycycle(led, intensity)
-    except gevent.GreenletExit:
-        logging.debug('LED Flash Greenlet Terminated')
-
-
-def set_lights_with_worker(lightsettings):
-    global worker
-    if worker and not worker.dead:
-        worker.kill()
-    worker = Greenlet(
-        set_leds, lightsettings)
-    worker.start()
-    gevent.sleep(0)
 
 
 def recover_last_state():
@@ -90,20 +52,16 @@ def persist_last_state(settings):
 # try to recover desired state from persisted message
 last_state = recover_last_state()
 if last_state:
-    set_lights_with_worker(last_state)
+    pi.apply_settings(last_state)
 
 try:
     while True:
         try:
             weather = Weather()
-            for x in range(-35, 40, 5):
-                color = weather.get_color_for_temperature(x)
-                print "Temperature: {}".format(x)
-                settings = LightSettings()
-                #weather.apply_to_settings(settings)
-                settings.set_color(color)
-                set_lights_with_worker(settings)
-                gevent.sleep(5)
+            settings = LightSettings()
+            weather.apply_to_settings(settings)
+            pi.apply_settings(settings)
+            gevent.sleep(5)
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)
