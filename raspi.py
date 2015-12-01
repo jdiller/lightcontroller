@@ -1,5 +1,6 @@
 import gevent
 import platform
+import logging
 
 # dirty hack to determine if we're actually running on the rpi
 if platform.machine().startswith("arm"):
@@ -24,10 +25,10 @@ class RasPi(object):
                 while True:
                     for led, intensity in settings.leds:
                         self.set_PWM_dutycycle(led, intensity)
-                    gevent.sleep(settings.onduration)
+                    gevent.sleep(settings.on_duration)
                     for led, intensity in settings.leds:
-                        self.set_PWM_dutyCyle(led, 0)
-                    gevent.sleep(settings.offduration)
+                        self.set_PWM_dutycycle(led, 0)
+                    gevent.sleep(settings.off_duration)
             else:
                 for led, intensity in settings.leds:
                     self.set_PWM_dutycycle(led, intensity)

@@ -64,23 +64,26 @@ class Weather(object):
             self.refresh()
         current_weather = self.weather_data.get('currently')
         if current_weather:
-            precip_probability = current_weather['precipProbability']
-            precip_intensity = current_weather['precipIntensity']
             temperature = current_weather['temperature']
             temperature_color = self.get_color_for_temperature(
                 round(temperature, 2))
             settings.set_color(temperature_color)
+            precip_intensity = current_weather.get('precipIntensity', 0)
             if precip_intensity > 0:
                 settings.flashing = True
                 settings.on_duration = 1
                 settings.off_duration = 1
 
-            if precip_probability > 30:
+        daily_weather = self.weather_data.get('daily')
+        if daily_weather:
+            today_weather = daily_weather['data'][0]
+            precip_probability = today_weather.get('precipProbability')
+            if precip_probability > 0.30:
                 settings.flashing = True
                 settings.on_duration = 4
                 settings.off_duration = 0.5
 
-            # cut intensity so things aren't so bright
-            settings.red /= 2.5
-            settings.blue /= 2.5
-            settings.green /= 2.5
+        # cut intensity so things aren't so bright
+        settings.red /= 2.5
+        settings.blue /= 2.5
+        settings.green /= 2.5
