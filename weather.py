@@ -43,7 +43,7 @@ class Weather(object):
             (-19.99, -15): (0x5F, 0xFA, 0xB9),
             (-14.99, -10): (0x55, 0xF8, 0x8B),
             (-9.99, -5): (0x4B, 0xF6, 0x58),
-            (-4.99, 0): (0x5F,0xF4, 0x41),
+            (-4.99, 0): (0x5F, 0xF4, 0x41),
             (0.01, 5): (0x85, 0xF2, 0x37),
             (5.01, 10): (0xB0, 0xEF, 0x2D),
             (10.01, 15): (0xDD, 0xED, 0x24),
@@ -67,7 +67,8 @@ class Weather(object):
             precip_probability = current_weather['precipProbability']
             precip_intensity = current_weather['precipIntensity']
             temperature = current_weather['temperature']
-            temperature_color = self.get_color_for_temperature(round(temperature, 2))
+            temperature_color = self.get_color_for_temperature(
+                round(temperature, 2))
             settings.set_color(temperature_color)
             if precip_intensity > 0:
                 settings.flashing = True
