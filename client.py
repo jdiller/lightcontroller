@@ -4,10 +4,10 @@ import logging
 import gevent
 import sys
 import raspi
-from weather import Weather
 from gevent import Greenlet
 from lightsettings import LightSettings
-
+from dataproviders.weather import WeatherData
+from adapters.weather import WeatherAdapter
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -57,16 +57,17 @@ if last_state:
 try:
     while True:
         try:
-            weather = Weather()
+            weather = WeatherData()
             settings = LightSettings()
-            weather.apply_to_settings(settings)
+            weather_adapter = WeatherAdapter(weather)
+            weather_adapter.apply_to_settings(settings)
             pi.apply_settings(settings)
             gevent.sleep(90)
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)
-        except Exception as x:
-            print x
+        #except Exception as x:
+        #    print x
 finally:
     # try to clean everything up before exiting.
     pi.set_PWM_dutycycle(RED, 0)
