@@ -96,10 +96,14 @@ try:
     while True:
         try:
             weather = Weather()
-            settings = LightSettings()
-            weather.apply_to_settings(settings)
-            set_lights_with_worker(settings)
-            gevent.sleep(100)
+            for x in range(-35, 40, 5):
+                color = weather.get_color_for_temperature(x)
+                print "Temperature: {}".format(x)
+                settings = LightSettings()
+                #weather.apply_to_settings(settings)
+                settings.set_color(color)
+                set_lights_with_worker(settings)
+                gevent.sleep(5)
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)
