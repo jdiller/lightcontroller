@@ -9,8 +9,13 @@ else:
     # dev/test mode
     import mockpigpio as pigpio
 
+# These are the GPIO pins that control each color
+GREEN = 17
+RED = 27
+BLUE = 22
 
 class RasPi(object):
+    leds = [RED, GREEN, BLUE]
 
     def __init__(self):
         self.pi = pigpio.pi()
@@ -27,19 +32,24 @@ class RasPi(object):
                 self.pi.set_PWM_dutycycle(pin, x)
                 gevent.sleep(0.01)
 
+    def set_all_off(self):
+        for pin in RasPi.leds:
+            self.pi.set_PWM_dutycycle(pin, 0)
+
     def _set_leds(self, settings):
         try:
             if settings.flashing:
                 while True:
-                    for led, intensity in settings.leds:
-                        self.set_PWM_dutycycle(led, intensity)
+                    self.pi.set_PWM_dutycycle(GREEN, settings.green)
+                    self.pi.set_PWM_dutycycle(RED, settings.red)
+                    self.pi.set_PWM_dutycycle(BLUE, settings.blue)
                     gevent.sleep(settings.on_duration)
-                    for led, intensity in settings.leds:
-                        self.set_PWM_dutycycle(led, 0)
+                    self.set_all_off()
                     gevent.sleep(settings.off_duration)
             else:
-                for led, intensity in settings.leds:
-                    self.set_PWM_dutycycle(led, intensity)
+                self.pi.set_PWM_dutycycle(GREEN, settings.green)
+                self.pi.set_PWM_dutycycle(RED, settings.red)
+                self.pi.set_PWM_dutycycle(BLUE, settings.blue)
         except gevent.GreenletExit:
             logging.debug('LED Flash Greenlet Terminated')
 

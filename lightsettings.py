@@ -19,10 +19,6 @@ class LightSettingsEncoder(json.JSONEncoder):
 
 class LightSettings(object):
 
-    red_led = None
-    blue_led = None
-    green_led = None
-
     def __init__(self, red=None, blue=None, green=None, flashing=None, on_duration=None, off_duration=None, color=None):
         if color and (red or blue or green):
             raise ValueError(

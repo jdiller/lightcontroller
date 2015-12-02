@@ -11,23 +11,17 @@ from adapters.weather import WeatherAdapter
 
 logging.basicConfig(level=logging.DEBUG)
 
-# These are the GPIO pins that control each color
-GREEN = 17
-RED = 27
-BLUE = 22
 
 worker = None
 pi = raspi.RasPi()
 
 # Init the GPIO, enable pulse-width modulation for brightness
 # Turn all the lights off to start
-pi.set_PWM_dutycycle(RED, 0)
-pi.set_PWM_dutycycle(GREEN, 0)
-pi.set_PWM_dutycycle(BLUE, 0)
+pi.set_all_off()
 
-LightSettings.red_led = RED
-LightSettings.blue_led = BLUE
-LightSettings.green_led = GREEN
+LightSettings.red_led = raspi.RED
+LightSettings.blue_led = raspi.BLUE
+LightSettings.green_led = raspi.GREEN
 
 
 def recover_last_state():
@@ -70,6 +64,4 @@ try:
         #    print x
 finally:
     # try to clean everything up before exiting.
-    pi.set_PWM_dutycycle(RED, 0)
-    pi.set_PWM_dutycycle(BLUE, 0)
-    pi.set_PWM_dutycycle(GREEN, 0)
+    pi.set_all_off()
