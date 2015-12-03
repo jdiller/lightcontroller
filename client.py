@@ -3,6 +3,7 @@
 import logging
 import gevent
 import sys
+import datetime
 import raspi
 from gevent import Greenlet
 from lightsettings import LightSettings
@@ -51,11 +52,19 @@ if last_state:
 try:
     while True:
         try:
-            weather = WeatherData()
-            settings = LightSettings()
-            weather_adapter = WeatherAdapter(weather)
-            weather_adapter.apply_to_settings(settings)
-            pi.apply_settings(settings)
+            now = datetime.datetime.now()
+            #turn off during the workday and all weekend
+            if (now.hour >= 10 and now.hour <= 17) or (now.hour >= 22 or now.hour <= 7) or now.weekday() in [5,6]:
+                logging.debug("Turning everything off per the schedule")
+                pi.set_all_off()
+            else:
+                weather = WeatherData()
+                settings = LightSettings()
+                weather_adapter = WeatherAdapter(weather)
+                weather_adapter.apply_to_settings(settings)
+                pi.apply_settings(settings)
+                if (now.hour > 19):
+                    pi.dim_all(50)
             gevent.sleep(90)
         except KeyboardInterrupt:
             print "Exiting"

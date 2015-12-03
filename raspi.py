@@ -34,7 +34,13 @@ class RasPi(object):
 
     def set_all_off(self):
         for pin in RasPi.leds:
-            self.pi.set_PWM_dutycycle(pin, 0)
+            self.set_PWM_dutycycle(pin, 0)
+
+    def dim_all(self, percentage):
+        for pin in RasPi.leds:
+            current_duty_cycle = self.pi.get_PWM_dutycycle(pin)
+            new_duty = current_duty_cycle * (percentage / 100)
+            self.set_PWM_dutycycle(pin, new_duty)
 
     def _set_leds(self, settings):
         try:
