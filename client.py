@@ -54,7 +54,7 @@ try:
         try:
             now = datetime.datetime.now()
             #turn off during the workday and all weekend
-            if (now.hour >= 10 and now.hour <= 17) or (now.hour >= 22 or now.hour <= 7) or now.weekday() in [5,6]:
+            if (now.hour >= 10 and now.hour <= 17) or (now.hour >= 22 or now.hour <= 6) or now.weekday() in [5,6]:
                 logging.debug("Turning everything off per the schedule")
                 pi.set_all_off()
             else:
