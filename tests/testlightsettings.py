@@ -132,7 +132,7 @@ class TestLightSettings(unittest.TestCase):
         self.assertEquals(s.blue, 255)
         self.assertEquals(s.green, 255)
 
-    def can_set_via_color_tuple(self):
+    def test_can_set_via_color_tuple(self):
         color = (128, 128, 128)
         s = LightSettings()
         s.set_color(color)
@@ -140,7 +140,7 @@ class TestLightSettings(unittest.TestCase):
         self.assertEquals(s.blue, 128)
         self.assertEquals(s.green, 128)
 
-    def can_dim_lights_uniformly(self):
+    def test_can_dim_lights_uniformly(self):
         color = (100, 100, 100)
         s = LightSettings()
         s.set_color(color)
