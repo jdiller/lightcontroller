@@ -62,8 +62,8 @@ try:
                 settings = LightSettings()
                 weather_adapter = WeatherAdapter(weather)
                 weather_adapter.apply_to_settings(settings)
-                #if now.hour >= 20:
-                #    settings.dim(75)
+                if now.hour >= 20:
+                    settings.dim(25)
                 pi.apply_settings(settings)
             gevent.sleep(90)
         except KeyboardInterrupt:
