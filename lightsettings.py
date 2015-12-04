@@ -128,3 +128,9 @@ class LightSettings(object):
         self.red = color[0]
         self.green = color[1]
         self.blue = color[2]
+
+    def dim(self, percentage):
+        self.red *= (percentage / 100)
+        self.blue *= (percentage / 100)
+        self.green *= (percentage / 100)
+

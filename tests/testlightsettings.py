@@ -140,6 +140,15 @@ class TestLightSettings(unittest.TestCase):
         self.assertEquals(s.blue, 128)
         self.assertEquals(s.green, 128)
 
+    def can_dim_lights_uniformly(self):
+        color = (100, 100, 100)
+        s = LightSettings()
+        s.set_color(color)
+        s.dim(75)
+        self.assertEquals(s.red, 75)
+        self.assertEquals(s.green, 75)
+        self.assertEquals(s.blue, 75)
+
     def test_raises_if_ambiguous_color_data_supplied(self):
         with self.assertRaises(ValueError):
             s = LightSettings(red=10, color=(10, 10, 10))
