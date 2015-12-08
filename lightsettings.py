@@ -133,4 +133,3 @@ class LightSettings(object):
         self.red *= (percentage / 100.0)
         self.blue *= (percentage / 100.0)
         self.green *= (percentage / 100.0)
-

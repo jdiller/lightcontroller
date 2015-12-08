@@ -14,6 +14,7 @@ GREEN = 17
 RED = 27
 BLUE = 22
 
+
 class RasPi(object):
     leds = [RED, GREEN, BLUE]
 

@@ -7,6 +7,7 @@ class TestLightSettings(unittest.TestCase):
 
     def test_can_init(self):
         settings = LightSettings()
+        self.assertIsNotNone(settings)
 
     def test_values_init_to_none(self):
         s = LightSettings()
@@ -31,11 +32,6 @@ class TestLightSettings(unittest.TestCase):
         s = LightSettings()
         s.green = 80
         self.assertEquals(s.green, 80)
-
-    def test_can_set_blue(self):
-        s = LightSettings()
-        s.blue = 20
-        self.assertEquals(s.blue, 20)
 
     def test_can_set_flashing(self):
         s = LightSettings()
@@ -151,4 +147,4 @@ class TestLightSettings(unittest.TestCase):
 
     def test_raises_if_ambiguous_color_data_supplied(self):
         with self.assertRaises(ValueError):
-            s = LightSettings(red=10, color=(10, 10, 10))
+            LightSettings(red=10, color=(10, 10, 10))

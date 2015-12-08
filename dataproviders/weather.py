@@ -25,5 +25,3 @@ class WeatherData(object):
         if not self.weather_data:
             self.refresh()
         return self.weather_data.get(value, default)
-
-
