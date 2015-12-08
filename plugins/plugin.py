@@ -1,5 +1,6 @@
 from lightsettings import LightSettings
 
+
 class Plugin(object):
 
     def execute(self):
@@ -9,4 +10,3 @@ class Plugin(object):
 
     def _apply_settings(self, settings):
         pass
-

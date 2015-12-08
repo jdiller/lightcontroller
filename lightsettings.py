@@ -133,3 +133,8 @@ class LightSettings(object):
         self.red *= (percentage / 100.0)
         self.blue *= (percentage / 100.0)
         self.green *= (percentage / 100.0)
+
+    def all_off(self):
+        self.red = 0
+        self.blue = 0
+        self.green = 0

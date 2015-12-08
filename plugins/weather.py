@@ -10,5 +10,3 @@ class Weather(Plugin):
         data = WeatherData()
         adapter = WeatherAdapter(data)
         adapter.apply_to_settings(settings)
-
-

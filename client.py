@@ -3,10 +3,10 @@
 import logging
 import gevent
 import sys
-import datetime
 import raspi
 from lightsettings import LightSettings
 from plugins.weather import Weather
+from modifiers.timeofday import TimeOfDayModifier
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -49,23 +49,15 @@ if last_state:
 try:
     while True:
         try:
-            now = datetime.datetime.now()
-            # turn off during the workday and all weekend
-            if (now.hour >= 10 and now.hour <= 17) or (now.hour >= 22 or now.hour <= 6) or now.weekday() in [5, 6]:
-                logging.debug("Turning everything off per the schedule")
-                pi.set_all_off()
-            else:
-                weather = Weather()
-                settings = weather.execute()
-                if now.hour >= 20:
-                    settings.dim(25)
-                pi.apply_settings(settings)
+            weather = Weather()
+            settings = weather.execute()
+            modifier = TimeOfDayModifier()
+            modifier.modify(settings)
+            pi.apply_settings(settings)
             gevent.sleep(90)
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)
-        # except Exception as x:
-        #    print x
 finally:
     # try to clean everything up before exiting.
     pi.set_all_off()
