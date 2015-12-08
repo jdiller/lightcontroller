@@ -6,9 +6,7 @@ import sys
 import datetime
 import raspi
 from lightsettings import LightSettings
-from dataproviders.weather import WeatherData
-from adapters.weather import WeatherAdapter
-
+from plugins.weather import Weather
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -57,10 +55,8 @@ try:
                 logging.debug("Turning everything off per the schedule")
                 pi.set_all_off()
             else:
-                weather = WeatherData()
-                settings = LightSettings()
-                weather_adapter = WeatherAdapter(weather)
-                weather_adapter.apply_to_settings(settings)
+                weather = Weather()
+                settings = weather.execute()
                 if now.hour >= 20:
                     settings.dim(25)
                 pi.apply_settings(settings)
