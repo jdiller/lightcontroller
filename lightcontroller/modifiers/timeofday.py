@@ -1,6 +1,6 @@
 import datetime
 import logging
-from modifiers.modifier import Modifier
+from lightcontroller.modifiers.modifier import Modifier
 
 
 class TimeOfDayModifier(Modifier):

@@ -1,6 +1,6 @@
 import unittest
 import json
-from alights.lightsettings import LightSettings
+from lightcontroller.lightsettings import LightSettings
 
 
 class TestLightSettings(unittest.TestCase):

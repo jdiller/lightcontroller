@@ -1,6 +1,6 @@
 import unittest
 from collections import defaultdict
-from alights.dispatcher import Dispatcher
+from lightcontroller.dispatcher import Dispatcher
 
 
 class MockConfig(object):
@@ -17,8 +17,8 @@ class TestDispatcher(unittest.TestCase):
     @property
     def mockconfig(self):
         ret = MockConfig()
-        ret.set('main', 'plugins', 'alights.plugins.weather.Weather')
-        ret.set('main', 'modifiers', 'alights.modifiers.timeofday.TimeOfDayModifier')
+        ret.set('main', 'plugins', 'lightcontroller.plugins.weather.Weather')
+        ret.set('main', 'modifiers', 'lightcontroller.modifiers.timeofday.TimeOfDayModifier')
         return ret
 
     def test_can_init_plugin_chain(self):

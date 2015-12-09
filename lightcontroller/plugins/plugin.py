@@ -1,4 +1,4 @@
-from lightsettings import LightSettings
+from lightcontroller.lightsettings import LightSettings
 
 
 class Plugin(object):

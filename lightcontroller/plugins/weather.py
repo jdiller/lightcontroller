@@ -1,6 +1,6 @@
 from plugin import Plugin
-from dataproviders.weather import WeatherData
-from adapters.weather import WeatherAdapter
+from lightcontroller.dataproviders.weather import WeatherData
+from lightcontroller.adapters.weather import WeatherAdapter
 
 
 class Weather(Plugin):

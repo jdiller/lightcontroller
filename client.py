@@ -3,12 +3,12 @@
 import logging
 import gevent
 import sys
-import raspi
+from lightcontroller import raspi
 from ConfigParser import ConfigParser
-from lightsettings import LightSettings
-from plugins.weather import Weather
-from modifiers.timeofday import TimeOfDayModifier
-from dispatcher import Dispatcher
+from lightcontroller.lightsettings import LightSettings
+from lightcontroller.plugins.weather import Weather
+from lightcontroller.modifiers.timeofday import TimeOfDayModifier
+from lightcontroller.dispatcher import Dispatcher
 logging.basicConfig(level=logging.DEBUG)
 
 
