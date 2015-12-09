@@ -4,9 +4,11 @@ import logging
 import gevent
 import sys
 import raspi
+from ConfigParser import ConfigParser
 from lightsettings import LightSettings
 from plugins.weather import Weather
 from modifiers.timeofday import TimeOfDayModifier
+from dispatcher import Dispatcher
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -49,6 +51,9 @@ if last_state:
 try:
     while True:
         try:
+            cp = ConfigParser()
+            cp.read('config.cfg')
+            dispatcher = Dispatcher(cp)
             weather = Weather()
             settings = weather.execute()
             modifier = TimeOfDayModifier()
