@@ -12,4 +12,4 @@ class TimeOfDayModifier(Modifier):
             logging.debug("Turning everything off based on schedule")
             settings.all_off()
         elif now.hour >= 20:
-            settings.dim(25)
+            settings.dim(90)
