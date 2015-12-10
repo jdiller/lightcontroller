@@ -51,6 +51,8 @@ class WeatherAdapter(object):
             if precip_intensity > 0:
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
+                precip_warning_settings.blue /= 3
+                precip_warning_settings.green /= 3
                 precip_warning_settings.on_duration = 4
                 settings.on_duration = 4
                 settings.next_settings = precip_warning_settings
@@ -63,6 +65,8 @@ class WeatherAdapter(object):
             if precip_probability > 0.30:
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
+                precip_warning_settings.blue /= 3
+                precip_warning_settings.green /= 3
                 precip_warning_settings.on_duration = 1
                 settings.on_duration = 4
                 settings.next_settings = precip_warning_settings
