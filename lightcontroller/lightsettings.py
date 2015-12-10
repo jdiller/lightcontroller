@@ -29,6 +29,7 @@ class LightSettings(object):
         self._flashing = flashing
         self._on_duration = on_duration
         self.next_settings = None
+        self._transition_time = None
         if color:
             self.set_color(color)
 
@@ -79,6 +80,17 @@ class LightSettings(object):
            next_settings.all_off()
            next_settings.flashing = True
            next_settings.next_settings = self
+
+    @property
+    def transition_time(self):
+        return self._transition_time
+
+    @transition_time.setter
+    def transition_time(self, value):
+        if value is not None and value < 0:
+            raise ValueError('Durations must be positive')
+        self._transition_time = value
+
 
     @property
     def on_duration(self):

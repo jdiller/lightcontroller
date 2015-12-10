@@ -71,4 +71,11 @@ class WeatherAdapter(object):
                 settings.on_duration = 4
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
-
+            else:
+                daily_high = today_weather.get('temperatureMax')
+                high_temp_settings = copy.copy(settings)
+                high_temp_color = self.get_color_for_temperature(daily_high)
+                high_temp_settings.set_color(high_temp_color)
+                high_temp_settings.transition_time = 4
+                high_temp_settings.next_settings = settings
+                settings.next_settings = high_temp_settings
