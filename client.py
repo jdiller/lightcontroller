@@ -6,8 +6,6 @@ import sys
 from lightcontroller import raspi
 from ConfigParser import ConfigParser
 from lightcontroller.lightsettings import LightSettings
-from lightcontroller.plugins.weather import Weather
-from lightcontroller.modifiers.timeofday import TimeOfDayModifier
 from lightcontroller.dispatcher import Dispatcher
 logging.basicConfig(level=logging.DEBUG)
 
@@ -49,17 +47,13 @@ if last_state:
     pi.apply_settings(last_state)
 
 try:
+    cp = ConfigParser()
+    cp.read('config.cfg')
+    dispatcher = Dispatcher(cp, pi)
+    dispatcher.start()
     while True:
         try:
-            cp = ConfigParser()
-            cp.read('config.cfg')
-            dispatcher = Dispatcher(cp)
-            weather = Weather()
-            settings = weather.execute()
-            modifier = TimeOfDayModifier()
-            modifier.modify(settings)
-            pi.apply_settings(settings)
-            gevent.sleep(90)
+            gevent.sleep()
         except KeyboardInterrupt:
             print "Exiting"
             sys.exit(0)

@@ -1,5 +1,4 @@
 import requests
-from ConfigParser import ConfigParser
 
 
 class WebEndpoint(object):
