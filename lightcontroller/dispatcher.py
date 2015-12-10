@@ -29,7 +29,7 @@ class Dispatcher(object):
             runner.greenlet.start()
 
     def stop(self):
-        for runner in self.runners():
+        for runner in self.runners:
            if not runner.greenlet.dead:
                runner.greenlet.kill()
 
