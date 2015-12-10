@@ -1,3 +1,5 @@
+import copy
+
 class WeatherAdapter(object):
 
     def __init__(self, weather_data):
@@ -47,18 +49,24 @@ class WeatherAdapter(object):
             settings.set_color(temperature_color)
             precip_intensity = current_weather.get('precipIntensity', 0)
             if precip_intensity > 0:
-                settings.flashing = True
-                settings.on_duration = 1
-                settings.off_duration = 1
+                precip_warning_settings = copy.copy(settings)
+                precip_warning_settings.red = 255
+                precip_warning_settings.on_duration = 4
+                settings.on_duration = 4
+                settings.next_settings = precip_warning_settings
+                precip_warning_settings.next_settings = settings
 
         daily_weather = self.weather_data.get('daily')
         if daily_weather:
             today_weather = daily_weather['data'][0]
             precip_probability = today_weather.get('precipProbability')
             if precip_probability > 0.30:
-                settings.flashing = True
+                precip_warning_settings = copy.copy(settings)
+                precip_warning_settings.red = 255
+                precip_warning_settings.on_duration = 1
                 settings.on_duration = 4
-                settings.off_duration = 0.5
+                settings.next_settings = precip_warning_settings
+                precip_warning_settings.next_settings = settings
 
         # cut intensity so things aren't so bright
         settings.red /= 2.5

@@ -8,7 +8,7 @@ class LightSettingsEncoder(json.JSONEncoder):
         if isinstance(s, LightSettings):
             ret = {}
             props = ['red', 'green', 'blue',
-                     'on_duration', 'off_duration', 'flashing']
+                     'on_duration', 'next_settings']
             for p in props:
                 if (getattr(s, p) is not None):
                     ret[p] = getattr(s, p)
@@ -19,7 +19,7 @@ class LightSettingsEncoder(json.JSONEncoder):
 
 class LightSettings(object):
 
-    def __init__(self, red=None, blue=None, green=None, flashing=None, on_duration=None, off_duration=None, color=None):
+    def __init__(self, red=None, blue=None, green=None, flashing=None, on_duration=None, color=None):
         if color and (red or blue or green):
             raise ValueError(
                 'Set individual colors or give a color tuple, not both')
@@ -28,7 +28,7 @@ class LightSettings(object):
         self._green = green
         self._flashing = flashing
         self._on_duration = on_duration
-        self._off_duration = off_duration
+        self.next_settings = None
         if color:
             self.set_color(color)
 
@@ -75,10 +75,10 @@ class LightSettings(object):
         else:
             self._flashing = (value == True)
         if self._flashing:
-            if self.on_duration is None:
-                self.on_duration = 1
-            if self.off_duration is None:
-                self.off_duration = 1
+           next_settings = LightSettings()
+           next_settings.all_off()
+           next_settings.flashing = True
+           next_settings.next_settings = self
 
     @property
     def on_duration(self):
@@ -89,16 +89,6 @@ class LightSettings(object):
         if value is not None and value < 0:
             raise ValueError('Durations must be positive')
         self._on_duration = value
-
-    @property
-    def off_duration(self):
-        return self._off_duration
-
-    @off_duration.setter
-    def off_duration(self, value):
-        if value is not None and value < 0:
-            raise ValueError('Durations must be positive')
-        self._off_duration = value
 
     def to_json(self):
         return json.dumps(self, cls=LightSettingsEncoder)
@@ -121,7 +111,6 @@ class LightSettings(object):
         ret.green = d.get('green')
         ret.flashing = d.get('flashing')
         ret.on_duration = d.get('on_duration')
-        ret.off_duration = d.get('off_duration')
         return ret
 
     def set_color(self, color):
@@ -138,3 +127,4 @@ class LightSettings(object):
         self.red = 0
         self.blue = 0
         self.green = 0
+

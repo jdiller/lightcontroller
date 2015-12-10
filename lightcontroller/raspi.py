@@ -37,20 +37,15 @@ class RasPi(object):
 
     def _set_leds(self, settings):
         try:
-            if settings.flashing:
-                while True:
-                    self.pi.set_PWM_dutycycle(GREEN, settings.green)
-                    self.pi.set_PWM_dutycycle(RED, settings.red)
-                    self.pi.set_PWM_dutycycle(BLUE, settings.blue)
-                    gevent.sleep(settings.on_duration)
-                    self.set_all_off()
-                    gevent.sleep(settings.off_duration)
-            else:
+            while settings:
                 self.pi.set_PWM_dutycycle(GREEN, settings.green)
                 self.pi.set_PWM_dutycycle(RED, settings.red)
                 self.pi.set_PWM_dutycycle(BLUE, settings.blue)
+                if settings.on_duration:
+                    gevent.sleep(settings.on_duration)
+                settings = settings.next_settings
         except gevent.GreenletExit:
-            logging.debug('LED Flash Greenlet Terminated')
+            logging.debug('LED settings Greenlet Terminated')
 
     def apply_settings(self, lightsettings):
         if self.worker and not self.worker.dead:

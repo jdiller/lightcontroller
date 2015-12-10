@@ -15,7 +15,6 @@ class TestLightSettings(unittest.TestCase):
         self.assertIsNone(s.blue)
         self.assertIsNone(s.green)
         self.assertIsNone(s.on_duration)
-        self.assertIsNone(s.off_duration)
         self.assertIsNone(s.flashing)
 
     def test_can_set_blue(self):
@@ -72,11 +71,6 @@ class TestLightSettings(unittest.TestCase):
         s.on_duration = 3
         self.assertEquals(s.on_duration, 3)
 
-    def test_can_set_off_duration(self):
-        s = LightSettings()
-        s.off_duration = 4
-        self.assertEquals(s.off_duration, 4)
-
     def test_can_serialize_to_json(self):
         s = LightSettings()
         s.red = 10
@@ -85,17 +79,16 @@ class TestLightSettings(unittest.TestCase):
 
     def test_can_initialize_via_constructor(self):
         s = LightSettings(
-            red=1, blue=2, green=3, flashing=True, on_duration=99, off_duration=101)
+            red=1, blue=2, green=3, flashing=True, on_duration=99)
         self.assertEquals(s.red, 1)
         self.assertEquals(s.blue, 2)
         self.assertEquals(s.green, 3)
         self.assertTrue(s.flashing)
         self.assertEquals(s.on_duration, 99)
-        self.assertEquals(s.off_duration, 101)
 
     def test_can_load_from_json(self):
         d = {'red': 10, 'blue': 20, 'green': 30,
-             'flashing': 'yes', 'on_duration': 1, 'off_duration': 3}
+             'flashing': 'yes', 'on_duration': 1}
         json_str = json.dumps(d)
         s = LightSettings.from_json(json_str)
         self.assertTrue(s is not None)
@@ -104,7 +97,6 @@ class TestLightSettings(unittest.TestCase):
         self.assertEquals(s.green, 30)
         self.assertTrue(s.flashing)
         self.assertEquals(s.on_duration, 1)
-        self.assertEquals(s.off_duration, 3)
 
     def test_can_iterate_led_settings(self):
         s = LightSettings(red=20, blue=20, green=20)
@@ -119,7 +111,6 @@ class TestLightSettings(unittest.TestCase):
         s = LightSettings(red=10)
         s.flashing = True
         self.assertTrue(s.on_duration is not None)
-        self.assertTrue(s.off_duration is not None)
 
     def test_can_create_from_color_tuple(self):
         color = (255, 255, 255)
