@@ -21,31 +21,6 @@ LightSettings.red_led = raspi.RED
 LightSettings.blue_led = raspi.BLUE
 LightSettings.green_led = raspi.GREEN
 
-
-def recover_last_state():
-    try:
-        f = open('last_state.json')
-        settings = LightSettings.from_json(f.read())
-        f.close()
-    except IOError as x:
-        logging.error(x)
-        settings = None
-    return settings
-
-
-def persist_last_state(settings):
-    try:
-        f = open('last_state.json', 'w')
-        f.write(settings.to_json())
-        f.close()
-    except IOError as x:
-        logging.error(x)
-
-# try to recover desired state from persisted message
-last_state = recover_last_state()
-if last_state:
-    pi.apply_settings(last_state)
-
 try:
     cp = ConfigParser()
     cp.read('config.cfg')
