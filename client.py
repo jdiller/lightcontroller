@@ -26,12 +26,13 @@ try:
     cp.read('config.cfg')
     dispatcher = Dispatcher(cp, pi)
     dispatcher.start()
-    while True:
-        try:
+    try:
+        while True:
             gevent.sleep()
-        except KeyboardInterrupt:
-            print "Exiting"
-            sys.exit(0)
+    except KeyboardInterrupt:
+        print "Exiting..."
+        dispatcher.stop()
+        sys.exit(0)
 finally:
     # try to clean everything up before exiting.
     pi.set_all_off()

@@ -28,10 +28,19 @@ class Dispatcher(object):
         for runner in self.runners:
             runner.greenlet.start()
 
+    def stop(self):
+        for runner in self.runners():
+           if not runner.greenlet.dead:
+               runner.greenlet.kill()
+
     def _plugin_loop(self, plugin):
-        lightsettings = plugin.execute()
-        self.apply_settings(lightsettings)
-        gevent.sleep(plugin.interval)
+        try:
+            while True:
+                lightsettings = plugin.execute()
+                self.apply_settings(lightsettings)
+                gevent.sleep(plugin.interval)
+        except gevent.GreenletExit:
+            logging.debug('Plugin ({}) loop aborted'.format(type(plugin).__name__))
 
     @property
     def plugin_chain(self):
