@@ -68,7 +68,3 @@ class WeatherAdapter(object):
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
 
-        # cut intensity so things aren't so bright
-        settings.red /= 2.5
-        settings.blue /= 2.5
-        settings.green /= 2.5
