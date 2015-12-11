@@ -15,7 +15,7 @@ class TestLightSettings(unittest.TestCase):
         self.assertIsNone(s.blue)
         self.assertIsNone(s.green)
         self.assertIsNone(s.on_duration)
-        self.assertIsNone(s.flashing)
+        self.assertIsNone(s.next_settings)
 
     def test_can_set_blue(self):
         s = LightSettings()

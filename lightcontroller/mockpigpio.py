@@ -1,3 +1,4 @@
+import logging
 class pi(object):
 
     def __init__(self):
@@ -5,7 +6,7 @@ class pi(object):
 
     def set_PWM_dutycycle(self, pin, cycle):
         self.pins[pin] = cycle
-        print 'Pin {} Duty cycle is now {}'.format(pin, cycle)
+        logging.info('Pin {} Duty cycle is now {}'.format(pin, cycle))
 
     def get_PWM_dutycycle(self, pin):
         return self.pins.get(pin, 0)
