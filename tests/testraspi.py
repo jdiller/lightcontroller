@@ -61,11 +61,11 @@ class TestRaspi(unittest.TestCase):
         settings = LightSettings(red=0, green=0, blue=0)
         settings2 = LightSettings(red=255, green=255, blue=255)
         settings.next_settings = settings2
-        settings.on_duration = 0.25
-        settings2.transition_time = 0.25
+        settings.on_duration = 0.015
+        settings2.transition_time = 0.015
         raspi.apply_settings(settings)
         for led in RasPi.leds:
             self.assertEquals(0, raspi.get_PWM_dutycycle(led))
-        gevent.sleep(0.60)
+        gevent.sleep(0.07)
         for led in RasPi.leds:
             self.assertEquals(255, raspi.get_PWM_dutycycle(led))
