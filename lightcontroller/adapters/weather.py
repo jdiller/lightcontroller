@@ -1,3 +1,4 @@
+import logging
 import copy
 
 class WeatherAdapter(object):
@@ -42,6 +43,8 @@ class WeatherAdapter(object):
         if not self.weather_data:
             self.refresh()
         current_weather = self.weather_data.get('currently')
+        daily_weather = self.weather_data.get('daily')
+
         if current_weather:
             temperature = current_weather['temperature']
             temperature_color = self.get_color_for_temperature(
@@ -49,6 +52,7 @@ class WeatherAdapter(object):
             settings.set_color(temperature_color)
             precip_intensity = current_weather.get('precipIntensity', 0)
             if precip_intensity > 0:
+                logging.debug('Setting up active precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
                 precip_warning_settings.blue /= 3
@@ -58,11 +62,11 @@ class WeatherAdapter(object):
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
 
-        daily_weather = self.weather_data.get('daily')
         if daily_weather:
             today_weather = daily_weather['data'][0]
             precip_probability = today_weather.get('precipProbability')
             if precip_probability > 0.30:
+                logging.debug('Setting up probable precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
                 precip_warning_settings.blue /= 3
@@ -71,8 +75,9 @@ class WeatherAdapter(object):
                 settings.on_duration = 4
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
-            else:
+            elif settings.next_settings is None:
                 daily_high = today_weather.get('temperatureMax')
+                logging.debug('Setting up daily max temperature info settings')
                 high_temp_settings = copy.copy(settings)
                 high_temp_color = self.get_color_for_temperature(daily_high)
                 high_temp_settings.set_color(high_temp_color)
