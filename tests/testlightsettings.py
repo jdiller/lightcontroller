@@ -62,15 +62,14 @@ class TestLightSettings(unittest.TestCase):
         s = LightSettings()
         s.red = 10
         jsonstr = s.to_json()
-        self.assertEquals(jsonstr, '{"red": 10.0}')
+        self.assertEquals(jsonstr, '{"red": 10}')
 
     def test_can_initialize_via_constructor(self):
         s = LightSettings(
-            red=1, blue=2, green=3, on_duration=99)
+            red=1, blue=2, green=3)
         self.assertEquals(s.red, 1)
         self.assertEquals(s.blue, 2)
         self.assertEquals(s.green, 3)
-        self.assertEquals(s.on_duration, 99)
 
     def test_can_load_from_json(self):
         d = {'red': 10, 'blue': 20, 'green': 30,
