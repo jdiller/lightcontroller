@@ -10,8 +10,18 @@ else:
     import mockpigpio as pigpio
 
 class RasPi(object):
+    """
+    A wrapper class around a lower-level Raspi GPIO interface. (Currently pigpio)
 
+    Used to switch pins on and off and set or get their duty cycle.
+    """
     def __init__(self, config):
+        """
+        Initialize the GPIO interface.
+
+        config -- a configuration object (configparser compatible) that specifies which GPIO pins represent which colours.
+        """
+
         self.green = config.getint('raspi', 'green')
         self.red = config.getint('raspi', 'red')
         self.blue = config.getint('raspi', 'blue')
@@ -20,20 +30,48 @@ class RasPi(object):
         self.worker = None
 
     def get_PWM_dutycycle(self, pin):
+        """
+        Query and return the current duty cycle of a GPIO pin.
+
+        pin -- the pin to get the duty cycle for
+        """
+
         return self.pi.get_PWM_dutycycle(pin)
 
     def set_PWM_dutycycle(self, pin, dutycycle):
+        """
+        Set the duty cycle of a specific pin to a specific value.
+
+        pin -- the pin to set the duty cycle for
+        dutycycle -- (float) value between 0.00 and 255.0 for the dutycycle
+        """
+
         self.pi.set_PWM_dutycycle(pin, dutycycle)
 
     def set_all_off(self):
+        """
+        Shortcut method to turn all configured pins (R,G,B) off at once.
+        """
+
         for pin in self.leds:
             self.set_PWM_dutycycle(pin, 0)
 
     def get_current_dutycycles(self):
+        """
+        Shortcut method to get all configured pins' (R,G,B) current dutycycle
+        """
+
         for led in self.leds:
             yield self.get_PWM_dutycycle(led)
 
     def dim_all(self, percentage):
+        """
+        Shortcut method to reduce all configured pins' (R,G,B) dutycycle to a percentage of their previous value
+
+        percentage -- the percentage to which to reduce the duty cycle
+        e.g. percentage == 30 && dutycycle == 100; dutycycle 100 -> 30
+        """
+
         for pin in self.leds:
             current_duty_cycle = self.pi.get_PWM_dutycycle(pin)
             new_duty = float(current_duty_cycle) * (float(percentage) / 100)
@@ -76,6 +114,14 @@ class RasPi(object):
             logging.debug('LED settings Greenlet Terminated')
 
     def apply_settings(self, lightsettings):
+        """
+        Applies a lightsettings chain.
+
+        Since lightsettings can be chained and looped, it is applied inside a greenlet i
+        which will let the chain/loop continue apace until it is aborted or finishes.
+
+        Calling this method again aborts any running greenlet and restarts it with new settings.
+        """
         if self.worker and not self.worker.dead:
             self.worker.kill()
         self.worker = gevent.Greenlet(
