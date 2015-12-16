@@ -3,7 +3,9 @@ import json
 
 
 class LightSettingsEncoder(json.JSONEncoder):
-
+    """
+    Custom JSON encoder for LightSettings objects
+    """
     def default(self, s):
         ret = {}
         props = ['red', 'green', 'blue',
@@ -15,15 +17,35 @@ class LightSettingsEncoder(json.JSONEncoder):
 
 
 class LightSettings(object):
+    """
+    Data class representing how RBG LEDs should be actuated.
 
-    def __init__(self, red=None, blue=None, green=None, on_duration=None, color=None):
+    Settings can be combined using `on_duration`, `transition_time` and `next_settings` to make patterns
+    The pattern can be looped by assigning the first settings object to the `next_settings` property of
+    the last settings object.
+
+    TODO: The r,g,b values are a stright pass through to duty cycle, but brightness is logarithmic, so
+    it would be nice if the range of values did a translation to relative brightness instead
+    """
+    def __init__(self, red=None, blue=None, green=None, color=None):
+        """
+        Initialize the settings object.
+
+        Keyword args:
+        red -- initial value for the brightness of the red led (0-255)
+        green -- initial value for the brightness of the green led (0-255)
+        blue -- initial value for the brightness of the blue led (0-255)
+        color -- a 3-tuple specifing red, green, blue all at once
+
+        Note: if the `color` 3-tuple is provided, an exception is thrown if individual color kwargs are also provided
+        """
         if color and (red or blue or green):
             raise ValueError(
                 'Set individual colors or give a color tuple, not both')
         self._red = red
         self._blue = blue
         self._green = green
-        self._on_duration = on_duration
+        self._on_duration = None
         self.next_settings = None
         self._transition_time = None
         if color:
@@ -31,6 +53,7 @@ class LightSettings(object):
 
     @property
     def red(self):
+        """ Get or set brightness of the red led (0-255) """
         return self._red
 
     @red.setter
@@ -41,6 +64,7 @@ class LightSettings(object):
 
     @property
     def green(self):
+        """ Get or set brightness of the green led (0-255) """
         return self._green
 
     @green.setter
@@ -51,6 +75,7 @@ class LightSettings(object):
 
     @property
     def blue(self):
+        """ Get or set brightness of the blue led (0-255) """
         return self._blue
 
     @blue.setter
@@ -61,6 +86,12 @@ class LightSettings(object):
 
     @property
     def transition_time(self):
+        """
+        Get or set the time (in seconds) to spend transitioning from the current settings to these settings.
+
+        If transition time is 0, the transition is immediate/abrupt, otherwise a fade algorithm is used to transition
+        more gently/gradually.
+        """
         return self._transition_time
 
     @transition_time.setter
@@ -72,6 +103,12 @@ class LightSettings(object):
 
     @property
     def on_duration(self):
+        """
+        Get or set the time the settings are applied for (after transition is complete, see: `transition_time`)
+        after which the settings in `next_settings` are applied.
+
+        If `next_settings` are not set, this property has no effect.
+        """
         return self._on_duration
 
     @on_duration.setter
@@ -81,15 +118,18 @@ class LightSettings(object):
         self._on_duration = value
 
     def to_json(self):
+        """ Returns a json string representing this object """
         return json.dumps(self, cls=LightSettingsEncoder)
 
     @classmethod
     def from_json(cls, jsonstr):
+        """ (Classmethod) Creates a new lightsettings object from json """
         d = json.loads(jsonstr)
         return cls.from_dict(d)
 
     @classmethod
     def from_dict(cls, d):
+        """ (ClassMethod) Creates a new lightsettings object from a dict """
         ret = LightSettings()
         ret.blue = d.get('blue')
         ret.red = d.get('red')
@@ -98,16 +138,19 @@ class LightSettings(object):
         return ret
 
     def set_color(self, color):
+        """ Sets all three colours at once using a 3-tuple (red, green, blue) """
         self.red = color[0]
         self.green = color[1]
         self.blue = color[2]
 
     def dim(self, percentage):
+        """ Convenience method to cut brightness to `percentage` of its former value """
         self.red *= (percentage / 100.0)
         self.blue *= (percentage / 100.0)
         self.green *= (percentage / 100.0)
 
     def all_off(self):
+        """ Convenience method to set all brightnesses to 0 """
         self.red = 0
         self.blue = 0
         self.green = 0

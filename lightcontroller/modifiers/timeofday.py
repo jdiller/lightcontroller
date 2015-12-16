@@ -4,6 +4,11 @@ from lightcontroller.modifiers.modifier import Modifier
 
 
 class TimeOfDayModifier(Modifier):
+    """
+    Modifies light behavior based on time of day. (e.g. Turns everything off at night and when nobody is home). 
+
+    TODO: Move the hard coded schedule to config.
+    """
 
     def _modify(self, settings):
         now = datetime.datetime.now()

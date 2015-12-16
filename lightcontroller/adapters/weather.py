@@ -2,6 +2,11 @@ import logging
 import copy
 
 class WeatherAdapter(object):
+    """
+    Converts a `WeatherData` object into a `LightSettings` object using rules.
+
+    TODO: Move more of the hard coded rules to config
+    """
 
     def __init__(self, weather_data):
         self.weather_data = weather_data

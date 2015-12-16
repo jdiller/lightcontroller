@@ -6,8 +6,18 @@ PluginRunner = namedtuple('PluginRunner', 'plugin greenlet')
 
 
 class Dispatcher(object):
+    """
+    This class loads plugins and modifiers and starts and stops them
+    """
 
     def __init__(self, config, raspi):
+        """
+        Set up the dispatcher, inject the config and raspi interface to use.
+
+        config -- a configparser compatible object with details on which plugins and modifiers to use.
+        raspi -- the raspi gpio interface
+        """
+
         self.config = config
         self.raspi = raspi
         self._plugins = {}
@@ -20,6 +30,10 @@ class Dispatcher(object):
         self.runners = []
 
     def start(self):
+        """
+        Starts all of the plugins in the plugin chain.
+        """
+
         for plugin in self.plugin_chain:
             worker = gevent.Greenlet(self._plugin_loop, plugin)
             runner = PluginRunner(plugin, worker)
@@ -29,11 +43,20 @@ class Dispatcher(object):
             runner.greenlet.start()
 
     def stop(self):
+        """
+        Stops all of the plugins in the plugin chain by killing their greenlet
+        """
+
         for runner in self.runners:
            if not runner.greenlet.dead:
                runner.greenlet.kill()
 
     def _plugin_loop(self, plugin):
+        """
+        Executes a plugin's `execute` method in a loop. Pauses for `plugin.interval` seconds after each execution.
+
+        plugin -- the plugin to run in the loop
+        """
         try:
             while True:
                 lightsettings = plugin.execute()
@@ -44,10 +67,12 @@ class Dispatcher(object):
 
     @property
     def plugin_chain(self):
+        """ All the loaded plugins """
         return self._plugins.values()
 
     @property
     def modifier_chain(self):
+        """ All the loaded modifiers """
         return self._modifiers.values()
 
     def _build_plugin_chain(self):
@@ -82,6 +107,10 @@ class Dispatcher(object):
             plugin_obj.sequence = self.config.getint(plugin, "sequence")
 
     def apply_settings(self, lightsettings):
+        """
+        Modifies a `lightsettings` object by passing it through the chain of modifiers
+        Then applies those settings to the GPIO
+        """
         for modifier in self.modifier_chain:
             modifier.modify(lightsettings)
         self.raspi.apply_settings(lightsettings)

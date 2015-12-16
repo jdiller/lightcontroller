@@ -1,6 +1,8 @@
 import logging
 class pi(object):
-
+    """
+    Simulates the pigpio interface. Used for testing and when not running on an actual RasPi
+    """
     def __init__(self):
         self.pins = {}
 

@@ -1,5 +1,5 @@
 class Modifier(object):
-
+    """ Base class for modifier objects. Inheriting classes should override `_modify` """
     def modify(self, settings):
         seen = []
         while settings and settings not in seen:
