@@ -9,16 +9,13 @@ else:
     # dev/test mode
     import mockpigpio as pigpio
 
-# These are the GPIO pins that control each color
-GREEN = 17
-RED = 27
-BLUE = 22
-
-
 class RasPi(object):
-    leds = [RED, GREEN, BLUE]
 
-    def __init__(self):
+    def __init__(self, config):
+        self.green = config.getint('raspi', 'green')
+        self.red = config.getint('raspi', 'red')
+        self.blue = config.getint('raspi', 'blue')
+        self.leds = [self.red, self.green, self.blue]
         self.pi = pigpio.pi()
         self.worker = None
 
@@ -29,15 +26,15 @@ class RasPi(object):
         self.pi.set_PWM_dutycycle(pin, dutycycle)
 
     def set_all_off(self):
-        for pin in RasPi.leds:
+        for pin in self.leds:
             self.set_PWM_dutycycle(pin, 0)
 
     def get_current_dutycycles(self):
-        for led in RasPi.leds:
+        for led in self.leds:
             yield self.get_PWM_dutycycle(led)
 
     def dim_all(self, percentage):
-        for pin in RasPi.leds:
+        for pin in self.leds:
             current_duty_cycle = self.pi.get_PWM_dutycycle(pin)
             new_duty = float(current_duty_cycle) * (float(percentage) / 100)
             self.set_PWM_dutycycle(pin, new_duty)
@@ -53,9 +50,9 @@ class RasPi(object):
         green_steps = self._get_steps(current_green, to_settings.green, STEPS)
         logging.debug('Starting step-wise transition to new settings')
         for x in range(STEPS + 1):
-            self.pi.set_PWM_dutycycle(RED, red_steps[x])
-            self.pi.set_PWM_dutycycle(BLUE, blue_steps[x])
-            self.pi.set_PWM_dutycycle(GREEN, green_steps[x])
+            self.pi.set_PWM_dutycycle(self.red, red_steps[x])
+            self.pi.set_PWM_dutycycle(self.blue, blue_steps[x])
+            self.pi.set_PWM_dutycycle(self.green, green_steps[x])
             gevent.sleep(float(duration) / STEPS)
         logging.debug('Step-wise transition completed')
 
@@ -68,9 +65,9 @@ class RasPi(object):
                     self._transition(settings, settings.transition_time)
                 else:
                     logging.debug('Direct set without transition')
-                    self.pi.set_PWM_dutycycle(GREEN, settings.green)
-                    self.pi.set_PWM_dutycycle(RED, settings.red)
-                    self.pi.set_PWM_dutycycle(BLUE, settings.blue)
+                    self.pi.set_PWM_dutycycle(self.green, settings.green)
+                    self.pi.set_PWM_dutycycle(self.red, settings.red)
+                    self.pi.set_PWM_dutycycle(self.blue, settings.blue)
                 if settings.on_duration:
                     logging.debug('Sleeping for on_duration of {} seconds'.format(settings.on_duration))
                     gevent.sleep(settings.on_duration)

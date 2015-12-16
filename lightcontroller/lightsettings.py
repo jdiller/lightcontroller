@@ -37,7 +37,7 @@ class LightSettings(object):
     def red(self, value):
         if value is not None and (value < 0 or value > 255):
             raise ValueError('Intensity must be between 0 and 255')
-        self._red = float(value)
+        self._red = value
 
     @property
     def green(self):
@@ -82,11 +82,6 @@ class LightSettings(object):
 
     def to_json(self):
         return json.dumps(self, cls=LightSettingsEncoder)
-
-    @property
-    def leds(self):
-        for led in ['red', 'green', 'blue']:
-            yield (getattr(self.__class__, '{}_led'.format(led)), getattr(self, led))
 
     @classmethod
     def from_json(cls, jsonstr):

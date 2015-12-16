@@ -83,15 +83,6 @@ class TestLightSettings(unittest.TestCase):
         self.assertEquals(s.green, 30)
         self.assertEquals(s.on_duration, 1)
 
-    def test_can_iterate_led_settings(self):
-        s = LightSettings(red=20, blue=20, green=20)
-        LightSettings.red_led = 17
-        LightSettings.green_led = 18
-        LightSettings.blue_led = 19
-        for led, val in s.leds:
-            self.assertTrue(led in [17, 18, 19])
-            self.assertEqual(val, 20)
-
     def test_can_create_from_color_tuple(self):
         color = (255, 255, 255)
         s = LightSettings(color=color)

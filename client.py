@@ -11,19 +11,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 worker = None
-pi = raspi.RasPi()
-
-# Init the GPIO, enable pulse-width modulation for brightness
-# Turn all the lights off to start
-pi.set_all_off()
-
-LightSettings.red_led = raspi.RED
-LightSettings.blue_led = raspi.BLUE
-LightSettings.green_led = raspi.GREEN
-
 try:
     cp = ConfigParser()
     cp.read('config.cfg')
+
+    pi = raspi.RasPi(cp)
+
+    # Init the GPIO, enable pulse-width modulation for brightness
+    # Turn all the lights off to start
+    pi.set_all_off()
+
     dispatcher = Dispatcher(cp, pi)
     dispatcher.start()
     try:
