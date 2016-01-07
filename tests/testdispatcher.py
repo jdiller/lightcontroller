@@ -8,11 +8,10 @@ class TestDispatcher(unittest.TestCase):
     @property
     def mockconfig(self):
         ret = MockConfig()
-        ret.set('main', 'plugins', 'lightcontroller.plugins.weather.Weather')
-        ret.set(
-            'main', 'modifiers', 'lightcontroller.modifiers.timeofday.TimeOfDayModifier')
-        ret.set('lightcontroller.plugins.weather.Weather', 'interval', 90)
-        ret.set('lightcontroller.plugins.weather.Weather', 'sequence', 1)
+        ret.set('main', 'plugins', 'Weather')
+        ret.set('main', 'modifiers', 'TimeOfDay')
+        ret.set('Weather', 'interval', 90)
+        ret.set('Weather', 'sequence', 1)
         ret.set('raspi', 'red', 17)
         ret.set('raspi', 'green', 18)
         ret.set('raspi', 'blue', 19)

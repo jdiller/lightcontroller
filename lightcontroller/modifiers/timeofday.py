@@ -3,7 +3,7 @@ import logging
 from lightcontroller.modifiers.modifier import Modifier
 
 
-class TimeOfDayModifier(Modifier):
+class TimeOfDay(Modifier):
     """
     Modifies light behavior based on time of day. (e.g. Turns everything off at night and when nobody is home). 
 

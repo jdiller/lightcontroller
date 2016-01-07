@@ -1,7 +1,7 @@
 import unittest
 from freezegun import freeze_time
 from lightcontroller.modifiers.modifier import Modifier
-from lightcontroller.modifiers.timeofday import TimeOfDayModifier
+from lightcontroller.modifiers.timeofday import TimeOfDay
 from lightcontroller.lightsettings import LightSettings
 
 class TestModifier(unittest.TestCase):
@@ -22,14 +22,14 @@ class TestModifier(unittest.TestCase):
         mod.modify(ls)
         self.assertIsNotNone(ls)
 
-class TestTimeOfDayModifier(unittest.TestCase):
+class TestTimeOfDay(unittest.TestCase):
     def test_can_init(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         self.assertIsNotNone(tod)
 
     @freeze_time('2015-12-25 10:01:00')
     def test_modifies_to_off_after_10am(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         ls = LightSettings(red=100, blue=100, green=100)
         tod.modify(ls)
         self.assertEquals(0, ls.red)
@@ -38,7 +38,7 @@ class TestTimeOfDayModifier(unittest.TestCase):
 
     @freeze_time('2015-12-25 22:01:00')
     def test_modifies_to_off_after_10pm(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         ls = LightSettings(red=100, blue=100, green=100)
         tod.modify(ls)
         self.assertEquals(0, ls.red)
@@ -47,7 +47,7 @@ class TestTimeOfDayModifier(unittest.TestCase):
 
     @freeze_time('2015-12-25 20:01:00')
     def test_evening_dim(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         ls = LightSettings(red=100, blue=100, green=100)
         tod.modify(ls)
         self.assertEquals(30, ls.red)
@@ -56,7 +56,7 @@ class TestTimeOfDayModifier(unittest.TestCase):
 
     @freeze_time('2015-12-25 07:00:00')
     def test_standard_dim(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         ls = LightSettings(red=100, blue=100, green=100)
         tod.modify(ls)
         self.assertEquals(70, ls.red)
@@ -65,7 +65,7 @@ class TestTimeOfDayModifier(unittest.TestCase):
 
     @freeze_time('2015-12-26 07:00:00')
     def test_off_on_weekend(self):
-        tod = TimeOfDayModifier()
+        tod = TimeOfDay()
         ls = LightSettings(red=100, blue=100, green=100)
         tod.modify(ls)
         self.assertEquals(0, ls.red)

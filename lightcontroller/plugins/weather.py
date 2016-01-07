@@ -1,4 +1,4 @@
-from plugin import Plugin
+from lightcontroller.plugins.plugin import Plugin
 from lightcontroller.dataproviders.weather import WeatherData
 from lightcontroller.adapters.weather import WeatherAdapter
 

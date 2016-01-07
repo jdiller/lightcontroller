@@ -1,6 +1,9 @@
 import logging
 import gevent
 from collections import namedtuple
+from classloader import ClassLoader
+from plugins.plugin import Plugin
+from modifiers.modifier import Modifier
 
 PluginRunner = namedtuple('PluginRunner', 'plugin greenlet')
 
@@ -68,41 +71,38 @@ class Dispatcher(object):
     @property
     def plugin_chain(self):
         """ All the loaded plugins """
-        return self._plugins.values()
+        return [x[1] for x in self._plugins]
 
     @property
     def modifier_chain(self):
         """ All the loaded modifiers """
-        return self._modifiers.values()
+        return [x[1] for x in self._modifiers]
 
     def _build_plugin_chain(self):
-        plugins = self.config.get('main', 'plugins')
-        self._plugins = self._load_object_chain(plugins)
+        plugins_to_load = self.config.get('main', 'plugins')
+        self._plugins = self._build_chain(plugins_to_load, 'plugin')
 
     def _build_modifier_chain(self):
-        modifiers = self.config.get('main', 'modifiers')
-        self._modifiers = self._load_object_chain(modifiers)
+        modifiers_to_load = self.config.get('main', 'modifiers')
+        self._modifiers = self._build_chain(modifiers_to_load, 'modifier')
 
-    def _load_object_chain(self, class_list):
-        classes = {}
-        for class_path in class_list.split(','):
-            cls = self._get_class(class_path)
-            logging.debug("Loading a {}, {}".format(class_path, cls))
-            new_obj = cls()
-            classes[class_path] = new_obj
-        logging.debug("Classes loaded: {}".format(classes))
-        return classes
-
-    def _get_class(self, class_path):
-        parts = class_path.split('.')
-        module = ".".join(parts[:-1])
-        m = __import__(module)
-        for comp in parts[1:]:
-            m = getattr(m, comp)
-        return m
+    def _build_chain(self, items_to_load, item_type):
+        loader = ClassLoader()
+        items = []
+        for item_name in items_to_load.split(','):
+            if item_type == 'plugin':
+                item_class = loader.get_plugin_class(item_name)
+            elif item_type == 'modifier':
+                item_class = loader.get_modifier_class(item_name)
+            else:
+                raise ValueError('Unknown item type {}'.format(item_type))
+            if item_class:
+                item = item_class()
+                items.append((item_name,item))
+        return items
 
     def _configure_plugins(self):
-        for plugin, plugin_obj in self._plugins.iteritems():
+        for plugin, plugin_obj in self._plugins:
             plugin_obj.interval = self.config.getint(plugin, "interval")
             plugin_obj.sequence = self.config.getint(plugin, "sequence")
 
