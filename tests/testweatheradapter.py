@@ -44,7 +44,7 @@ class TestWeatherAdapter(unittest.TestCase):
         adptr = WeatherAdapter(data)
         settings = LightSettings()
         adptr.apply_to_settings(settings)
-        self.assertTrue(settings.next_settings is not None)
+        self.assertTrue(settings.next_settings is None)
         self.assertTrue(settings.transition_time is None)
 
     def test_probable_precip_max_red(self):
