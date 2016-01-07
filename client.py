@@ -25,7 +25,7 @@ try:
     dispatcher.start()
     try:
         while True:
-            gevent.sleep(0.1)
+            gevent.sleep(10)
     except KeyboardInterrupt:
         print "Exiting..."
         dispatcher.stop()

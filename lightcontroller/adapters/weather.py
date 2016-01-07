@@ -85,7 +85,10 @@ class WeatherAdapter(object):
                 logging.debug('Setting up daily max temperature info settings')
                 high_temp_settings = copy.copy(settings)
                 high_temp_color = self.get_color_for_temperature(daily_high)
-                high_temp_settings.set_color(high_temp_color)
-                high_temp_settings.transition_time = 4
-                high_temp_settings.next_settings = settings
-                settings.next_settings = high_temp_settings
+                if high_temp_color != (settings.red, settings.green, settings.blue):
+                    high_temp_settings.set_color(high_temp_color)
+                    high_temp_settings.transition_time = 4
+                    high_temp_settings.next_settings = settings
+                    settings.next_settings = high_temp_settings
+                else:
+                    logging.debug('Daily max temp colour is the same as current color. Not transitioning')
