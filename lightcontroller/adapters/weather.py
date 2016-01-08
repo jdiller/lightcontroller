@@ -64,6 +64,8 @@ class WeatherAdapter(object):
                 precip_warning_settings.green /= 3
                 precip_warning_settings.on_duration = 4
                 settings.on_duration = 4
+                setttings.transition_time = 3
+                precip_warning_settings.transition_time = 3
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
 
@@ -78,6 +80,8 @@ class WeatherAdapter(object):
                 precip_warning_settings.green /= 3
                 precip_warning_settings.on_duration = 1
                 settings.on_duration = 4
+                setttings.transition_time = 3
+                precip_warning_settings.transition_time = 3
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
             elif settings.next_settings is None:
