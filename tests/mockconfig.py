@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 class MockConfig(object):
 
     def __init__(self):
@@ -14,4 +15,6 @@ class MockConfig(object):
     def getint(self, section, key):
         return int(self.data[section].get(key))
 
-
+    def items(self, section):
+        for k, v in self.data[section].iteritems():
+            yield (k, v)

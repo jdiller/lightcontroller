@@ -1,0 +1,26 @@
+[main]
+plugins=Weather
+modifiers=Dimmer,TimeOfDay
+
+[raspi]
+green = 17
+red = 27
+blue = 22
+
+[Weather]
+interval=90
+sequence=1
+
+[forecast]
+API_KEY={{PUT FORECAST.IO API KEY HERE}}
+LATITUDE=43.6462468
+LONGITUDE=-79.3967172
+
+[TimeOfDay]
+off_between=[(23,7),(10,17)]
+off_days=[5,6]
+dim_between=[(20, 7)]
+dim_level=30
+
+[Dimmer]
+dim_level=70

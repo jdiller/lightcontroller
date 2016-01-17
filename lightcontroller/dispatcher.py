@@ -9,6 +9,7 @@ PluginRunner = namedtuple('PluginRunner', 'plugin greenlet')
 
 
 class Dispatcher(object):
+
     """
     This class loads plugins and modifiers and starts and stops them
     """
@@ -30,6 +31,7 @@ class Dispatcher(object):
         self._build_modifier_chain()
 
         self._configure_plugins()
+        self._configure_modifiers()
         self.runners = []
 
     def start(self):
@@ -51,8 +53,8 @@ class Dispatcher(object):
         """
 
         for runner in self.runners:
-           if not runner.greenlet.dead:
-               runner.greenlet.kill()
+            if not runner.greenlet.dead:
+                runner.greenlet.kill()
 
     def _plugin_loop(self, plugin):
         """
@@ -66,7 +68,8 @@ class Dispatcher(object):
                 self.apply_settings(lightsettings)
                 gevent.sleep(plugin.interval)
         except gevent.GreenletExit:
-            logging.debug('Plugin ({}) loop aborted'.format(type(plugin).__name__))
+            logging.debug(
+                'Plugin ({}) loop aborted'.format(type(plugin).__name__))
 
     @property
     def plugin_chain(self):
@@ -98,13 +101,17 @@ class Dispatcher(object):
                 raise ValueError('Unknown item type {}'.format(item_type))
             if item_class:
                 item = item_class()
-                items.append((item_name,item))
+                items.append((item_name, item))
         return items
 
     def _configure_plugins(self):
         for plugin, plugin_obj in self._plugins:
             plugin_obj.interval = self.config.getint(plugin, "interval")
             plugin_obj.sequence = self.config.getint(plugin, "sequence")
+
+    def _configure_modifiers(self):
+        for modifier, modifier_obj in self._modifiers:
+            modifier_obj.configure(self.config.items(modifier))
 
     def apply_settings(self, lightsettings):
         """
