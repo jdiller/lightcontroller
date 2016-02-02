@@ -36,6 +36,8 @@ class TimeOfDay(Modifier):
         elif dim_by_hour:
             logging.debug("Dimming lights based on schedule")
             settings.dim(self.dim_level)
+        else:
+            logging.debug("No modifications based on schedule required")
 
     @property
     def off_between(self):

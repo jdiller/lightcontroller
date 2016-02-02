@@ -119,5 +119,6 @@ class Dispatcher(object):
         Then applies those settings to the GPIO
         """
         for modifier in self.modifier_chain:
+            logging.debug("Passing settings to modifier: {}".format(type(modifier).__name__))
             modifier.modify(lightsettings)
         self.raspi.apply_settings(lightsettings)
