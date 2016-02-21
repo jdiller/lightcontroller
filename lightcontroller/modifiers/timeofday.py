@@ -8,8 +8,6 @@ class TimeOfDay(Modifier):
 
     """
     Modifies light behavior based on time of day. (e.g. Turns everything off at night and when nobody is home). 
-
-    TODO: Move the hard coded schedule to config.
     """
 
     def __init__(self):
