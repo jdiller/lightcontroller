@@ -69,9 +69,7 @@ class WeatherAdapter(object):
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
 
-        if daily_weather:
-            today_weather = daily_weather['data'][0]
-            precip_probability = today_weather.get('precipProbability')
+            precip_probability = current_weather.get('precipProbability')
             if precip_probability > 0.30:
                 logging.debug('Setting up probable precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
@@ -85,6 +83,7 @@ class WeatherAdapter(object):
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
             elif settings.next_settings is None:
+                today_weather = daily_weather['data'][0] 
                 daily_high = today_weather.get('temperatureMax')
                 logging.debug('Setting up daily max temperature info settings')
                 high_temp_settings = copy.copy(settings)
