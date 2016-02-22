@@ -51,7 +51,7 @@ class TestWeatherAdapter(unittest.TestCase):
         data = MockWeatherData()
         data.refresh()
         data.weather_data['currently']['precipIntensity'] = 0
-        data.weather_data['daily']['data'][0]['precipProbability'] = 0.60
+        data.weather_data['currently']['precipProbability'] = 0.60
         adptr = WeatherAdapter(data)
         settings = LightSettings()
         adptr.apply_to_settings(settings)
