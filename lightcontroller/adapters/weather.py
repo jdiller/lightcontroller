@@ -60,8 +60,8 @@ class WeatherAdapter(object):
                 logging.debug('Setting up active precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
-                precip_warning_settings.blue /= 3
-                precip_warning_settings.green /= 3
+                precip_warning_settings.blue = 0
+                precip_warning_settings.green = 0
                 precip_warning_settings.on_duration = 4
                 settings.on_duration = 4
                 settings.transition_time = 3
