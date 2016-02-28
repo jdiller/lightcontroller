@@ -9,7 +9,7 @@ class LightSettingsEncoder(json.JSONEncoder):
     def default(self, s):
         ret = {}
         props = ['red', 'green', 'blue',
-                 'on_duration', 'next_settings']
+                 'on_duration']
         for p in props:
             if (getattr(s, p) is not None):
                 ret[p] = getattr(s, p)
@@ -155,3 +155,8 @@ class LightSettings(object):
         self.blue = 0
         self.green = 0
 
+    def __repr__(self):
+        return self.to_json()
+
+    def __str__(self):
+        return self.to_json()
