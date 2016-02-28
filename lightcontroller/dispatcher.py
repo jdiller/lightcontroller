@@ -65,7 +65,8 @@ class Dispatcher(object):
         try:
             while True:
                 lightsettings = plugin.execute()
-                self.apply_settings(lightsettings)
+                if lightsettings:
+                    self.apply_settings(lightsettings)
                 gevent.sleep(plugin.interval)
         except gevent.GreenletExit:
             logging.debug(

@@ -56,21 +56,20 @@ class WeatherAdapter(object):
                 round(temperature, 2))
             settings.set_color(temperature_color)
             precip_intensity = current_weather.get('precipIntensity', 0)
+            precip_probability = current_weather.get('precipProbability')
             if precip_intensity > 0:
                 logging.debug('Setting up active precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
                 precip_warning_settings.blue = 0
                 precip_warning_settings.green = 0
-                precip_warning_settings.on_duration = 4
+                precip_warning_settings.on_duration = 1
                 settings.on_duration = 4
-                settings.transition_time = 3
-                precip_warning_settings.transition_time = 3
+                settings.transition_time = 2
+                precip_warning_settings.transition_time = 2
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
-
-            precip_probability = current_weather.get('precipProbability')
-            if precip_probability > 0.30:
+            elif precip_probability > 0.30:
                 logging.debug('Setting up probable precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
                 precip_warning_settings.red = 255
@@ -82,7 +81,7 @@ class WeatherAdapter(object):
                 precip_warning_settings.transition_time = 3
                 settings.next_settings = precip_warning_settings
                 precip_warning_settings.next_settings = settings
-            elif settings.next_settings is None:
+            if settings.next_settings is None:
                 today_weather = daily_weather['data'][0] 
                 daily_high = today_weather.get('temperatureMax')
                 logging.debug('Setting up daily max temperature info settings')

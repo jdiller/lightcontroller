@@ -122,6 +122,7 @@ class RasPi(object):
 
         Calling this method again aborts any running greenlet and restarts it with new settings.
         """
+        logging.debug("Applying settings: {}".format(lightsettings))
         if self.worker and not self.worker.dead:
             self.worker.kill()
         self.worker = gevent.Greenlet(

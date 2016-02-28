@@ -9,11 +9,12 @@ class Presence(Modifier):
         self._devices = []
 
     def _modify(self, lightsettings):
-        if lightsettings.red == 0 and lightsettings.blue == 0 and lightsettings.green == 0:
-            pp = PresenceProvider(self.devices)
-            if pp.user_present:
-                logging.debug("Activating blue lights because of user presence")
-                lightsettings.blue = 255
+        pp = PresenceProvider(self.devices)
+        if not pp.user_present:
+            logging.debug("Turning everything off because nobody is home")
+            lightsettings.all_off()
+        else:
+            logging.debug("User presence detected. No changes to be made")
 
     @property
     def devices(self):
