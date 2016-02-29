@@ -108,7 +108,6 @@ class RasPi(object):
     def _set_leds(self, settings):
         try:
             while settings:
-                logging.debug('Applying new settings')
                 if settings.transition_time and settings.transition_time > 0:
                     logging.debug('Settings call for a transition to the new ones')
                     self._transition(settings, settings.transition_time)

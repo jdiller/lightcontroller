@@ -16,7 +16,7 @@ class WebPoll(Plugin):
             settings.red = data.get('red', 0)
             settings.blue = data.get('blue', 0)
             settings.green = data.get('green', 0)
-            settings.transition_time = 2
+            settings.transition_time = 1
             settings.next_settings = None
         else:
             logging.debug("No data from web poll, passing through settings unchanged")

@@ -12,6 +12,6 @@ class Presence(object):
     @property
     def user_present(self):
         for device in self.devices:
-            if bluetooth.lookup_name(device):
+            if bluetooth.lookup_name(device, timeout=1.5):
                 return True
 
