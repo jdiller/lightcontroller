@@ -13,6 +13,7 @@ class Presence(Modifier):
         if not pp.user_present:
             logging.debug("Turning everything off because nobody is home")
             lightsettings.all_off()
+            lightsettings.next_settings = None
         else:
             logging.debug("User presence detected. No changes to be made")
 

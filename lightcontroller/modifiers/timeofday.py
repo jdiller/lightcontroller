@@ -73,10 +73,8 @@ class TimeOfDay(Modifier):
         logging.debug(
             "Checking if {}:00 is between {}:00 and {}:00".format(now, start, end))
         if start <= end:
-            logging.debug("No midnight span, straightforward comparison")
             ret = start <= now < end
         else:  # over midnight e.g., 23:30-04:15
-            logging.debug("Range spans midnight")
             ret = start <= now or now < end
         logging.debug("it is between" if ret else "it is not between")
         return ret

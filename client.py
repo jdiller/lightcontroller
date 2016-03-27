@@ -31,6 +31,10 @@ try:
     except KeyboardInterrupt:
         print "Exiting..."
         dispatcher.stop()
+        for thread in threading.enumerate():
+            if isinstance(thread, StoppableThread):
+                thread.stop()
+                thread.join()
         sys.exit(0)
 finally:
     # try to clean everything up before exiting.

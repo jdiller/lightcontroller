@@ -3,3 +3,4 @@ flask
 gevent
 pybluez
 freezegun
+redis

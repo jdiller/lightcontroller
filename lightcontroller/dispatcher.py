@@ -33,6 +33,7 @@ class Dispatcher(object):
         self._configure_plugins()
         self._configure_modifiers()
         self.runners = []
+        self.settings_by_plugin = {}
 
     def start(self):
         """
@@ -66,7 +67,7 @@ class Dispatcher(object):
             while True:
                 lightsettings = plugin.execute()
                 if lightsettings:
-                    self.apply_settings(lightsettings)
+                    self.apply_settings(lightsettings, plugin.sequence)
                 gevent.sleep(plugin.interval)
         except gevent.GreenletExit:
             logging.debug(
@@ -114,12 +115,21 @@ class Dispatcher(object):
         for modifier, modifier_obj in self._modifiers:
             modifier_obj.configure(self.config.items(modifier))
 
-    def apply_settings(self, lightsettings):
+    def apply_settings(self, lightsettings, sequence):
         """
         Modifies a `lightsettings` object by passing it through the chain of modifiers
         Then applies those settings to the GPIO
         """
+        logging.debug("Pushing new settings on to the stack: {}".format(lightsettings))
+        self.settings_by_plugin[sequence] = lightsettings
         for modifier in self.modifier_chain:
             logging.debug("Passing settings to modifier: {}".format(type(modifier).__name__))
             modifier.modify(lightsettings)
-        self.raspi.apply_settings(lightsettings)
+        self._activate_settings()
+
+    def _activate_settings(self):
+        all_settings = sorted(self.settings_by_plugin.items(), key=lambda x:x[0])
+        for settings in [x[1] for x in all_settings]:
+            if settings and not settings.is_empty:
+                self.raspi.apply_settings(settings)
+                break

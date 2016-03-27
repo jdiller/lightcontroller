@@ -110,14 +110,16 @@ class RasPi(object):
             while settings:
                 if settings.transition_time and settings.transition_time > 0:
                     logging.debug('Settings call for a transition to the new ones')
+                    logging.debug(settings)
                     self._transition(settings, settings.transition_time)
                 else:
                     logging.debug('Direct set without transition')
-                    if settings.green:
+                    logging.debug(settings)
+                    if settings.green is not None:
                         self.pi.set_PWM_dutycycle(self.green, settings.green)
-                    if settings.red:
+                    if settings.red is not None:
                         self.pi.set_PWM_dutycycle(self.red, settings.red)
-                    if settings.blue:
+                    if settings.blue is not None:
                         self.pi.set_PWM_dutycycle(self.blue, settings.blue)
                 if settings.on_duration:
                     logging.debug('Sleeping for on_duration of {} seconds'.format(settings.on_duration))
@@ -135,6 +137,10 @@ class RasPi(object):
 
         Calling this method again aborts any running greenlet and restarts it with new settings.
         """
+        if lightsettings == (self.red, self.green, self.blue):
+            logging.debug("New settings match old. Nothing do be done")
+            return
+
         logging.debug("Applying settings: {}".format(lightsettings))
         if self.worker and not self.worker.dead:
             self.worker.kill()

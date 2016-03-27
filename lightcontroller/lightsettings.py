@@ -117,6 +117,10 @@ class LightSettings(object):
             raise ValueError('Durations must be positive')
         self._on_duration = value
 
+    @property
+    def is_empty(self):
+        return self.red is None and self.blue is None and self.green is None
+
     def to_json(self):
         """ Returns a json string representing this object """
         return json.dumps(self, cls=LightSettingsEncoder)
@@ -145,15 +149,32 @@ class LightSettings(object):
 
     def dim(self, percentage):
         """ Convenience method to cut brightness to `percentage` of its former value """
-        self.red *= (percentage / 100.0)
-        self.blue *= (percentage / 100.0)
-        self.green *= (percentage / 100.0)
+        if self.red:
+            self.red *= (percentage / 100.0)
+        if self.blue:
+            self.blue *= (percentage / 100.0)
+        if self.green:
+            self.green *= (percentage / 100.0)
 
     def all_off(self):
         """ Convenience method to set all brightnesses to 0 """
         self.red = 0
         self.blue = 0
         self.green = 0
+
+    def __eq__(self, other):
+        if isinstance(other, LightSettings):
+            return (self.red == other.red and
+                    self.blue == other.blue and
+                    self.green == other.green)
+        if isinstance(other, tuple) and len(other) == 3:
+            return (self.red == other[0] and 
+                    self.blue == other[1] and
+                    self.green == other[2])
+        return False
+
+    def __ne__(self, other):
+        return not(self == other)
 
     def __repr__(self):
         return self.to_json()

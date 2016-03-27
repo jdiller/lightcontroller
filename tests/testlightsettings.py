@@ -109,3 +109,23 @@ class TestLightSettings(unittest.TestCase):
     def test_raises_if_ambiguous_color_data_supplied(self):
         with self.assertRaises(ValueError):
             LightSettings(red=10, color=(10, 10, 10))
+
+    def test_can_compare_settings_for_equivalence(self):
+        color = (100, 100, 100)
+        s = LightSettings()
+        s.set_color(color)
+
+        s2 = LightSettings()
+        s2.set_color(color)
+
+        self.assertEquals(s, s2)
+        self.assertFalse(s is s2)
+
+    def test_can_compare_settings_to_tuple(self):
+        color = (100, 100, 100)
+        s = LightSettings()
+        s.set_color(color)
+
+        self.assertEquals(s, color)
+
+
