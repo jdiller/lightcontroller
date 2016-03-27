@@ -3,11 +3,13 @@
 import logging
 import gevent
 import sys
+import threading
+from lightcontroller.threading.stoppable import StoppableThread
 from lightcontroller import raspi
 from ConfigParser import ConfigParser
 from lightcontroller.lightsettings import LightSettings
 from lightcontroller.dispatcher import Dispatcher
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-10s) [%(asctime)s]: %(message)s')
 
 
 worker = None
