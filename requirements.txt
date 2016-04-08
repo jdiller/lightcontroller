@@ -1,6 +1,6 @@
 requests
 flask
 gevent
-pybluez
+#pybluez
 freezegun
 redis

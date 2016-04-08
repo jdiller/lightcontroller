@@ -1,6 +1,9 @@
 import requests
 import ast
-import bluetooth
+try:
+    import bluetooth
+except ImportError:
+    import lightcontroller.mockbluetooth as bluetooth
 import threading
 import logging
 import time
