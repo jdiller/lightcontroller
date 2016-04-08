@@ -124,6 +124,13 @@ class RasPi(object):
                 if settings.on_duration:
                     logging.debug('Sleeping for on_duration of {} seconds'.format(settings.on_duration))
                     gevent.sleep(settings.on_duration)
+                if settings == settings.next_settings:
+                    logging.debug("Same color, so not transitioning")
+                    if settings.next_settings.next_settings is not settings:
+                        settings.next_settings = settings.next_settings.next_settings
+                        continue
+                    else:
+                        break
                 settings = settings.next_settings
         except gevent.GreenletExit:
             logging.debug('LED settings Greenlet Terminated')
