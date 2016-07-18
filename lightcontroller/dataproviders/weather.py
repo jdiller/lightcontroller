@@ -29,11 +29,17 @@ class WeatherData(object):
             self.weather_data = json.loads(weather_json)
         else:
             logging.debug("Fetching new weather data from online provider")
-            r = requests.get(self.request_url)
-            self.store.setex('last_weather', WeatherData.REFRESH_TIMEOUT, r.text)
-            self.weather_data = r.json()
+            try:
+                r = requests.get(self.request_url)
+            except requests.ConnectionError:
+                logging.warn('Failed to fetch weather data from online service')
+            if r and r.text:
+                self.store.setex('last_weather', WeatherData.REFRESH_TIMEOUT, r.text)
+                self.weather_data = r.json()
 
     def get(self, value, default=None):
-        if not self.weather_data:
+        while not self.weather_data:
             self.refresh()
+            if not self.weather_data:
+                sleep(2)
         return self.weather_data.get(value, default)

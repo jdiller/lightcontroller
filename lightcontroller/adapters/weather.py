@@ -72,9 +72,9 @@ class WeatherAdapter(object):
             elif precip_probability > 0.30:
                 logging.debug('Setting up probable precipitation warning settings')
                 precip_warning_settings = copy.copy(settings)
-                precip_warning_settings.red = 255
-                precip_warning_settings.blue /= 3
-                precip_warning_settings.green /= 3
+                precip_warning_settings.red = 0xF3
+                precip_warning_settings.blue = 0xF3
+                precip_warning_settings.green = 0x15
                 precip_warning_settings.on_duration = 1
                 settings.on_duration = 4
                 settings.transition_time = 3
@@ -90,6 +90,7 @@ class WeatherAdapter(object):
                 if high_temp_color != (settings.red, settings.green, settings.blue):
                     high_temp_settings.set_color(high_temp_color)
                     high_temp_settings.transition_time = 4
+                    settings.transition_time = 4
                     high_temp_settings.next_settings = settings
                     settings.next_settings = high_temp_settings
                 else:
