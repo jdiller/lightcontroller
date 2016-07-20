@@ -29,6 +29,7 @@ class WeatherData(object):
             self.weather_data = json.loads(weather_json)
         else:
             logging.debug("Fetching new weather data from online provider")
+            r = None
             try:
                 r = requests.get(self.request_url)
             except requests.ConnectionError:
