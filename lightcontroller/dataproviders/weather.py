@@ -5,7 +5,7 @@ import json
 from ConfigParser import ConfigParser
 
 class WeatherData(object):
-    BASE_URL = 'https://api.forecast.io/forecast/{}/{},{}?units=si'
+    BASE_URL = 'https://api.darksky.net/forecast/{}/{},{}?units=si'
     REFRESH_TIMEOUT = 90
 
     def __init__(self):
