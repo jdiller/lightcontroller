@@ -17,19 +17,23 @@ class Presence(object):
     devices = None
     poll_thread = None
     timeout = 4
-
+    poll_lock = None
     @classmethod
     def poll(cls):
+        if not cls.poll_lock:
+            cls.poll_lock = threading.Lock()
         while not cls.poll_thread.stopped:
-            cls.poll_once()
-            time.sleep(0.3)
+            if cls.poll_lock.acquire(False):
+                cls.poll_once()
+                time.sleep(0.5)
+                cls.poll_lock.release()
 
     @classmethod
     def poll_once(cls):
         for device in cls.devices:
             logging.debug("Looking for bluetooth devices to indicate presence")
             if bluetooth.lookup_name(device, timeout=cls.timeout):
-                logging.debug("Presence detected")
+                logging.debug("Presence detected ({})".format(device))
                 with cls.last_presence_lock:
                     cls.last_presence = datetime.now()
                 break
