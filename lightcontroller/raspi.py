@@ -86,14 +86,17 @@ class RasPi(object):
         blue_steps = None
         green_steps = None
         current_red, current_green, current_blue = self.get_current_dutycycles()
-        if to_settings.red:
+        if to_settings.red is not None:
             red_steps = self._get_steps(current_red, to_settings.red, STEPS)
-        if to_settings.blue:
+        if to_settings.blue is not None:
             blue_steps = self._get_steps(current_blue, to_settings.blue, STEPS)
-        if to_settings.green: 
+        if to_settings.green is not None: 
             green_steps = self._get_steps(current_green, to_settings.green, STEPS)
 
         logging.debug('Starting step-wise transition to new settings')
+        logging.debug(red_steps)
+        logging.debug(green_steps)
+        logging.debug(blue_steps)
         if red_steps or blue_steps or green_steps:
             for x in range(STEPS + 1):
                 if red_steps:

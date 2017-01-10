@@ -53,5 +53,5 @@ class Presence(object):
         with Presence.last_presence_lock:
             if Presence.last_presence:
                 return (datetime.now() - Presence.last_presence).seconds <= 2 * Presence.timeout
-
+        return False
 

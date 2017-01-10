@@ -57,7 +57,7 @@ class TestWeatherAdapter(unittest.TestCase):
         adptr.apply_to_settings(settings)
         self.assertTrue(settings.next_settings is not None)
         self.assertEquals(4, settings.on_duration)
-        self.assertEquals(255, settings.next_settings.red)
+        self.assertEquals(243, settings.next_settings.red)
 
     def test_active_precip_max_red(self):
         data = MockWeatherData()
