@@ -94,9 +94,6 @@ class RasPi(object):
             green_steps = self._get_steps(current_green, to_settings.green, STEPS)
 
         logging.debug('Starting step-wise transition to new settings')
-        logging.debug(red_steps)
-        logging.debug(green_steps)
-        logging.debug(blue_steps)
         if red_steps or blue_steps or green_steps:
             for x in range(STEPS + 1):
                 if red_steps:

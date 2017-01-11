@@ -2,6 +2,7 @@ import requests
 import redis
 import logging
 import json
+from time import sleep
 from ConfigParser import ConfigParser
 
 class WeatherData(object):
