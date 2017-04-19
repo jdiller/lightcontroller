@@ -19,6 +19,7 @@ class WebPollData(object):
         logging.debug("Refreshing WebPoll data")
         resp = requests.get(self.request_url)
         self.data = resp.json()
+        logging.debug("Got WebPoll data: {}".format(self.data))
 
     def get(self, value, default=None):
         if self.data is None:
