@@ -16,5 +16,5 @@ class MockConfig(object):
         return int(self.data[section].get(key))
 
     def items(self, section):
-        for k, v in self.data[section].iteritems():
+        for k, v in self.data[section].items():
             yield (k, v)

@@ -1,6 +1,7 @@
 import datetime
 import logging
 import ast
+from functools import reduce
 from lightcontroller.modifiers.modifier import Modifier
 from lightcontroller.dataproviders.presence import Presence
 class TimeOfDay(Modifier):

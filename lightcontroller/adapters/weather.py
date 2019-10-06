@@ -40,7 +40,7 @@ class WeatherAdapter(object):
         return temps
 
     def get_color_for_temperature(self, temperature):
-        for key, value in self.color_table.iteritems():
+        for key, value in self.color_table.items():
             if temperature >= key[0] and temperature <= key[1]:
                 return value
 

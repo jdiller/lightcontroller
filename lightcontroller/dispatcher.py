@@ -8,7 +8,7 @@ from modifiers.modifier import Modifier
 PluginRunner = namedtuple('PluginRunner', 'plugin greenlet')
 
 
-class Dispatcher(object):
+class Dispatcher:
 
     """
     This class loads plugins and modifiers and starts and stops them

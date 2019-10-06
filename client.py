@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import threading
 import gevent
 import sys
-import threading
 from lightcontroller.threading.stoppable import StoppableThread
 from lightcontroller import raspi
 from ConfigParser import ConfigParser
@@ -29,7 +29,7 @@ try:
         while True:
             gevent.sleep(10)
     except KeyboardInterrupt:
-        print "Exiting..."
+        print("Exiting...")
         dispatcher.stop()
         for thread in threading.enumerate():
             if isinstance(thread, StoppableThread):
